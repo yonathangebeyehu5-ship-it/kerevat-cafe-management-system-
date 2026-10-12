@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>RESTAURANT OS - Run Your Restaurant. Control Every Operation.</title>
+  <meta name="description" content="Next-Generation Restaurant & Café Management Operating System for Ethiopia. Integrated POS, KDS, Floor Plan, Inventory, Recipes, CRM, Multi-Branch & AI Assistant." />
+  
+  <!-- Modern Typography (Inter & Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons for crisp UI icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Chart.js for interactive analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Canvas Confetti for celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="theme-dark">
+  <!-- Audio notification elements (synthesized via Web Audio API) -->
+  
+  <!-- App Container -->
+  <div id="app" class="app-layout">
+    
+    <!-- Top Header Navigation Bar -->
+    <header class="top-navbar" id="topNavbar">
+      <div class="nav-left">
+        <button id="sidebarToggleBtn" class="icon-btn" title="Toggle Navigation">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+        <div class="brand-container">
+          <div class="brand-logo-badge">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">RESTAURANT <span class="brand-accent">OS</span></div>
+            <div class="brand-tagline">Control Every Operation</div>
+          </div>
+        </div>
+
+        <!-- Branch Selector -->
+        <div class="branch-selector-wrapper">
+          <i class="fa-solid fa-location-dot branch-icon"></i>
+          <select id="branchSelector" class="custom-select branch-select">
+            <option value="all">🏢 All Branches (Consolidated)</option>
+            <option value="bole" selected>📍 Bole Flagship (Addis Ababa)</option>
+            <option value="kazanchis">📍 Kazanchis Center</option>
+            <option value="piassa">📍 Piassa Heritage</option>
+            <option value="hawassa">📍 Hawassa Lakeside</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Operational Ticker (Status Banner) -->
+      <div class="nav-center-ticker" id="operationalTicker">
+        <div class="ticker-item"><span class="ticker-pulse green"></span> <strong id="tickerActiveOrders">12</strong> Active Orders</div>
+        <div class="ticker-divider">|</div>
+        <div class="ticker-item"><i class="fa-solid fa-chair text-warning"></i> <strong id="tickerOccupiedTables">8/24</strong> Tables Busy</div>
+        <div class="ticker-divider">|</div>
+        <div class="ticker-item"><i class="fa-solid fa-coins text-success"></i> <strong id="tickerTodayRevenue">48,750</strong> ETB Today</div>
+        <div class="ticker-divider">|</div>
+        <div class="ticker-item" id="tickerAlertWrapper"><span class="status-badge badge-warning" id="tickerAlertBadge"><i class="fa-solid fa-triangle-exclamation"></i> 1 Alert</span></div>
+      </div>
+
+      <!-- Top Right Controls -->
+      <div class="nav-right">
+        <!-- Quick Action Menu -->
+        <button class="btn btn-primary btn-sm btn-glow" id="btnQuickNewOrder">
+          <i class="fa-solid fa-plus"></i> <span class="hide-mobile">New Order</span>
+        </button>
+        
+        <!-- Live Audio Alert Toggle -->
+        <button class="icon-btn" id="audioToggleBtn" title="Sound Alerts (Enabled)">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+
+        <!-- AI Assistant Trigger Button -->
+        <button class="icon-btn ai-btn-pulse" id="btnOpenAI" title="Gursha AI Assistant">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+
+        <!-- Notification Bell -->
+        <div class="dropdown-wrapper">
+          <button class="icon-btn notification-btn" id="notificationBtn" title="Notifications">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">3</span>
+          </button>
+          <div class="dropdown-menu notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header">
+              <h6>Live Notifications</h6>
+              <button class="text-btn" id="btnClearNotifications">Clear all</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+              <!-- Dynamically rendered notification items -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Switcher (Crucial for testing all 16 roles seamlessly) -->
+        <div class="role-selector-pill">
+          <span class="role-label-text">Role:</span>
+          <select id="roleSelector" class="role-select">
+            <optgroup label="Management & Executive">
+              <option value="owner" selected>👑 Owner</option>
+              <option value="general_manager">👔 General Manager</option>
+              <option value="branch_manager">🏢 Branch Manager</option>
+              <option value="supervisor">📋 Shift Supervisor</option>
+            </optgroup>
+            <optgroup label="Front of House & Service">
+              <option value="cashier">💳 Cashier / POS</option>
+              <option value="waiter">🍽️ Waiter / Server</option>
+              <option value="delivery">🛵 Delivery Staff</option>
+            </optgroup>
+            <optgroup label="Kitchen & Beverage Stations">
+              <option value="chef">👨‍🍳 Executive Chef</option>
+              <option value="kitchen_staff">🍳 Kitchen Prep Staff</option>
+              <option value="barista">☕ Barista (Coffee Station)</option>
+              <option value="bartender">🍸 Bartender (Bar Station)</option>
+            </optgroup>
+            <optgroup label="Back Office & Operations">
+              <option value="storekeeper">📦 Storekeeper (Inventory)</option>
+              <option value="purchasing">🛒 Purchasing Officer</option>
+              <option value="accountant">📊 Accountant / Finance</option>
+              <option value="hr">👥 HR & Admin</option>
+              <option value="cleaner">🧹 Cleaner & Maintenance</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- User Profile Avatar Pill -->
+        <div class="user-profile-btn" id="userProfileBtn">
+          <div class="user-avatar" id="currentUserAvatar">OW</div>
+          <div class="user-info-text hide-mobile">
+            <div class="user-name" id="currentUserName">Abebe Kebede</div>
+            <div class="user-role-tag" id="currentUserRoleTag">Owner</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main-body-wrapper">
+      
+      <!-- Collapsible Sidebar Navigation -->
+      <aside class="app-sidebar" id="appSidebar">
+        <div class="sidebar-inner">
+          
+          <div class="sidebar-section-title" data-roles="owner,general_manager,branch_manager,supervisor">COMMAND & CONTROL</div>
+          <nav class="sidebar-nav">
+            <a href="#control-center" class="nav-item active" data-view="control-center" data-roles="owner,general_manager,branch_manager,supervisor">
+              <i class="fa-solid fa-tower-broadcast"></i>
+              <span class="nav-text">Control Center</span>
+              <span class="nav-pill live-pill">LIVE</span>
+            </a>
+            <a href="#dashboard" class="nav-item" data-view="dashboard" data-roles="owner,general_manager,branch_manager">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span class="nav-text" id="navDashboardTitle">Owner Dashboard</span>
+            </a>
+            <a href="#manager-ops" class="nav-item" data-view="manager-ops" data-roles="owner,general_manager,branch_manager,supervisor">
+              <i class="fa-solid fa-gauge-high"></i>
+              <span class="nav-text">Operations Status</span>
+            </a>
+          </nav>
+
+          <!-- SECTION: CASHIER OPERATIONS (ONLY CASHIER & OWNER/GM) -->
+          <div class="sidebar-section-title" data-roles="cashier,owner,general_manager,branch_manager">CASHIER DESK</div>
+          <nav class="sidebar-nav">
+            <a href="#cashier-home" class="nav-item" data-view="cashier-home" data-roles="cashier,owner">
+              <i class="fa-solid fa-house-circle-check"></i>
+              <span class="nav-text">Cashier Home</span>
+              <span class="nav-pill count-pill" id="navCashierUnpaidCount">0</span>
+            </a>
+            <a href="#pos" class="nav-item" data-view="pos" data-roles="cashier,owner,general_manager,branch_manager,supervisor">
+              <i class="fa-solid fa-cash-register"></i>
+              <span class="nav-text">Cashier POS</span>
+              <span class="nav-pill count-pill" id="navOpenOrdersCount">5</span>
+            </a>
+          </nav>
+
+          <!-- SECTION: DINING & SERVICE (WAITER & SUPERVISOR ONLY - NO CASHIER) -->
+          <div class="sidebar-section-title" data-roles="waiter,supervisor,owner,general_manager,branch_manager">DINING & SERVICE</div>
+          <nav class="sidebar-nav">
+            <a href="#waiter-hub" class="nav-item" data-view="waiter-hub" data-roles="waiter,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-bell-concierge"></i>
+              <span class="nav-text">Waiter Terminal</span>
+            </a>
+            <a href="#tables" class="nav-item" data-view="tables" data-roles="waiter,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-table-cells-large"></i>
+              <span class="nav-text">Floor Plan & Tables</span>
+            </a>
+            <a href="#reservations" class="nav-item" data-view="reservations" data-roles="waiter,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-calendar-check"></i>
+              <span class="nav-text">Reservations</span>
+              <span class="nav-pill" id="navReservationsCount">4</span>
+            </a>
+            <a href="#delivery" class="nav-item" data-view="delivery" data-roles="delivery,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-motorcycle"></i>
+              <span class="nav-text">Delivery Dispatch</span>
+            </a>
+          </nav>
+
+          <!-- SECTION: KITCHEN & PREPARATION (CHEF & KITCHEN STAFF ONLY) -->
+          <div class="sidebar-section-title" data-roles="chef,kitchen_staff,barista,bartender,supervisor,owner,general_manager,branch_manager">KITCHEN & PREPARATION</div>
+          <nav class="sidebar-nav">
+            <a href="#kitchen-home" class="nav-item" data-view="kitchen-home" data-roles="chef,kitchen_staff,owner">
+              <i class="fa-solid fa-house-fire"></i>
+              <span class="nav-text">Kitchen Home</span>
+              <span class="nav-pill pulse-pill" id="navKitchenQueueCount">0</span>
+            </a>
+            <a href="#kds" class="nav-item" data-view="kds" data-roles="chef,kitchen_staff,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-fire-burner"></i>
+              <span class="nav-text">Kitchen Display (KDS)</span>
+              <span class="nav-pill pulse-pill" id="navKdsActiveCount">7</span>
+            </a>
+            <a href="#barista-station" class="nav-item" data-view="barista-station" data-roles="barista,bartender,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-mug-hot"></i>
+              <span class="nav-text">Barista & Bar KDS</span>
+            </a>
+            <a href="#kitchen-performance" class="nav-item" data-view="kitchen-performance" data-roles="supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-stopwatch"></i>
+              <span class="nav-text">Kitchen Efficiency</span>
+            </a>
+          </nav>
+
+          <!-- SECTION: MENU & INVENTORY (STOREKEEPER & PURCHASING - NO CHEF) -->
+          <div class="sidebar-section-title" data-roles="storekeeper,purchasing,owner,general_manager,branch_manager">MENU & INVENTORY</div>
+          <nav class="sidebar-nav">
+            <a href="#menu-management" class="nav-item" data-view="menu-management" data-roles="owner,general_manager,branch_manager,supervisor">
+              <i class="fa-solid fa-book-open"></i>
+              <span class="nav-text">Menu & Categories</span>
+            </a>
+            <a href="#recipes" class="nav-item" data-view="recipes" data-roles="storekeeper,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-kitchen-set"></i>
+              <span class="nav-text">Recipes & BOM</span>
+            </a>
+            <a href="#inventory" class="nav-item" data-view="inventory" data-roles="storekeeper,purchasing,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-boxes-stacked"></i>
+              <span class="nav-text">Stock & Inventory</span>
+              <span class="nav-pill alert-pill" id="navLowStockCount">2</span>
+            </a>
+            <a href="#purchasing" class="nav-item" data-view="purchasing" data-roles="purchasing,storekeeper,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-cart-flatbed"></i>
+              <span class="nav-text">Purchasing & Orders</span>
+            </a>
+            <a href="#suppliers" class="nav-item" data-view="suppliers" data-roles="purchasing,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-truck-field"></i>
+              <span class="nav-text">Suppliers</span>
+            </a>
+          </nav>
+
+          <!-- SECTION: MANAGEMENT & FINANCE (NO CASHIER, NO KITCHEN STAFF) -->
+          <div class="sidebar-section-title" data-roles="accountant,hr,cleaner,owner,general_manager,branch_manager">MANAGEMENT & FINANCE</div>
+          <nav class="sidebar-nav">
+            <a href="#expenses" class="nav-item" data-view="expenses" data-roles="accountant,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-receipt"></i>
+              <span class="nav-text">Expenses</span>
+            </a>
+            <a href="#staff-attendance" class="nav-item" data-view="staff-attendance" data-roles="hr,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-user-clock"></i>
+              <span class="nav-text">Staff & Attendance</span>
+            </a>
+            <a href="#tasks" class="nav-item" data-view="tasks" data-roles="cleaner,waiter,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-list-check"></i>
+              <span class="nav-text">Task Manager</span>
+            </a>
+            <a href="#cleaning" class="nav-item" data-view="cleaning" data-roles="cleaner,supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-broom"></i>
+              <span class="nav-text">Hygiene & Maintenance</span>
+            </a>
+            <a href="#crm" class="nav-item" data-view="crm" data-roles="owner,general_manager,branch_manager">
+              <i class="fa-solid fa-users"></i>
+              <span class="nav-text">Customers & Loyalty</span>
+            </a>
+            <a href="#complaints" class="nav-item" data-view="complaints" data-roles="supervisor,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-comments"></i>
+              <span class="nav-text">Complaints & Tickets</span>
+            </a>
+            <a href="#reports" class="nav-item" data-view="reports" data-roles="accountant,owner,general_manager,branch_manager">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <span class="nav-text">Reports & P&L</span>
+            </a>
+            <a href="#open-close" class="nav-item" data-view="open-close" data-roles="owner,general_manager,branch_manager,supervisor">
+              <i class="fa-solid fa-door-open"></i>
+              <span class="nav-text">Opening & Closing</span>
+            </a>
+            <a href="#automations" class="nav-item" data-view="automations" data-roles="owner,general_manager">
+              <i class="fa-solid fa-gears"></i>
+              <span class="nav-text">Smart Automations</span>
+            </a>
+            <a href="#audit-log" class="nav-item" data-view="audit-log" data-roles="owner,general_manager">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span class="nav-text">Security & Audit Log</span>
+            </a>
+          </nav>
+
+          <!-- Sidebar Footer Status -->
+          <div class="sidebar-footer">
+            <div class="shift-status-card">
+              <div class="shift-dot active"></div>
+              <div class="shift-info">
+                <div class="shift-title">Day Shift #104</div>
+                <div class="shift-sub">Cashier: Bethlehem T.</div>
+              </div>
+              <button class="btn btn-xs btn-outline" id="btnQuickShiftClose" title="End Shift Reconcile">Close</button>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Main Content Views Container -->
+      <main class="app-main-content" id="mainContent">
+        
+        <!-- ============================================== -->
+        <!-- VIEW 1: RESTAURANT CONTROL CENTER (COMMAND HUB) -->
+        <!-- ============================================== -->
+        <section id="view-control-center" class="view-panel active">
+          <div class="view-header">
+            <div>
+              <div class="badge-live-pulse"><i class="fa-solid fa-satellite-dish"></i> LIVE RESTAURANT CONTROL CENTER</div>
+              <h1 class="view-title">Mission Control & Real-Time Pulse</h1>
+              <p class="view-subtitle">Instant visibility across dining floors, kitchen stations, cash points, inventory, and pending staff actions.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-secondary btn-sm" id="btnRefreshControlCenter">
+                <i class="fa-solid fa-rotate"></i> Refresh State
+              </button>
+              <button class="btn btn-accent btn-sm" id="btnTriggerSimulateOrder">
+                <i class="fa-solid fa-bolt"></i> Simulate Live Order
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-Time Telemetry 10-Indicator Grid -->
+          <div class="control-grid-metrics">
+            <div class="metric-card metric-glow-emerald">
+              <div class="metric-top">
+                <span class="metric-label">TOTAL SALES (ETB)</span>
+                <span class="metric-icon"><i class="fa-solid fa-coins"></i></span>
+              </div>
+              <div class="metric-value" id="ccSalesTotal">48,750 <span class="currency-tag">ETB</span></div>
+              <div class="metric-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% vs yesterday</div>
+            </div>
+
+            <div class="metric-card metric-glow-cyan">
+              <div class="metric-top">
+                <span class="metric-label">ACTIVE ORDERS</span>
+                <span class="metric-icon"><i class="fa-solid fa-receipt"></i></span>
+              </div>
+              <div class="metric-value" id="ccActiveOrders">12</div>
+              <div class="metric-sub">5 Kitchen • 4 Barista • 3 Bar</div>
+            </div>
+
+            <div class="metric-card metric-glow-amber">
+              <div class="metric-top">
+                <span class="metric-label">TABLE OCCUPANCY</span>
+                <span class="metric-icon"><i class="fa-solid fa-chair"></i></span>
+              </div>
+              <div class="metric-value" id="ccTableOccupancy">68%</div>
+              <div class="metric-sub">16 / 24 Occupied • 4 Reserved</div>
+            </div>
+
+            <div class="metric-card metric-glow-rose">
+              <div class="metric-top">
+                <span class="metric-label">KITCHEN AVG SPEED</span>
+                <span class="metric-icon"><i class="fa-solid fa-stopwatch"></i></span>
+              </div>
+              <div class="metric-value" id="ccKitchenAvgTime">14 <span class="unit-tag">min</span></div>
+              <div class="metric-sub"><span class="text-danger" id="ccDelayedOrdersCount">1 order delayed</span> (>20m)</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">STAFF ON DUTY</span>
+                <span class="metric-icon"><i class="fa-solid fa-user-check"></i></span>
+              </div>
+              <div class="metric-value" id="ccStaffAttendance">18 / 20</div>
+              <div class="metric-sub">2 On Leave • 0 Unexcused</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">STOCK ALERTS</span>
+                <span class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+              </div>
+              <div class="metric-value text-warning" id="ccLowStockItems">2 Items</div>
+              <div class="metric-sub">Teff Flour & Milk low</div>
+            </div>
+          </div>
+
+          <!-- Real-Time Triage & Health Monitor -->
+          <div class="cc-columns-wrapper">
+            <!-- Left Column: Critical Status Stream -->
+            <div class="cc-left-column">
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <div class="panel-card-title">
+                    <i class="fa-solid fa-circle-exclamation text-danger"></i> Live Operational Alerts & Triage
+                  </div>
+                  <span class="status-badge badge-info">Real-time Stream</span>
+                </div>
+                <div class="alert-feed-list" id="ccAlertsFeed">
+                  <!-- Generated live alerts -->
+                </div>
+              </div>
+
+              <!-- Quick Station Workloads -->
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <div class="panel-card-title">
+                    <i class="fa-solid fa-kitchen-set"></i> Preparation Station Workloads
+                  </div>
+                </div>
+                <div class="station-workloads-grid">
+                  <div class="station-workload-card">
+                    <div class="station-head">
+                      <div class="station-name"><i class="fa-solid fa-fire text-danger"></i> Main Kitchen</div>
+                      <span class="status-badge badge-warning" id="stationKitchenStatus">High Load</span>
+                    </div>
+                    <div class="workload-bar-wrap">
+                      <div class="workload-bar fill-75" id="stationKitchenBar"></div>
+                    </div>
+                    <div class="station-metrics-row">
+                      <span>Queue: <strong id="stationKitchenCount">6 orders</strong></span>
+                      <span>Avg Prep: <strong>16m</strong></span>
+                    </div>
+                  </div>
+
+                  <div class="station-workload-card">
+                    <div class="station-head">
+                      <div class="station-name"><i class="fa-solid fa-mug-hot text-amber"></i> Barista Station</div>
+                      <span class="status-badge badge-success" id="stationBaristaStatus">Normal</span>
+                    </div>
+                    <div class="workload-bar-wrap">
+                      <div class="workload-bar fill-40" id="stationBaristaBar"></div>
+                    </div>
+                    <div class="station-metrics-row">
+                      <span>Queue: <strong id="stationBaristaCount">3 orders</strong></span>
+                      <span>Avg Prep: <strong>6m</strong></span>
+                    </div>
+                  </div>
+
+                  <div class="station-workload-card">
+                    <div class="station-head">
+                      <div class="station-name"><i class="fa-solid fa-martini-glass-citrus text-primary"></i> Bar & Beverages</div>
+                      <span class="status-badge badge-success" id="stationBarStatus">Normal</span>
+                    </div>
+                    <div class="workload-bar-wrap">
+                      <div class="workload-bar fill-25" id="stationBarBar"></div>
+                    </div>
+                    <div class="station-metrics-row">
+                      <span>Queue: <strong id="stationBarCount">2 orders</strong></span>
+                      <span>Avg Prep: <strong>4m</strong></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Live Event Audit & Feed -->
+            <div class="cc-right-column">
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <div class="panel-card-title">
+                    <i class="fa-solid fa-bolt-lightning text-accent"></i> Live Restaurant Activity Feed
+                  </div>
+                  <button class="btn btn-xs btn-outline" id="btnFilterLiveAudit">All Events</button>
+                </div>
+                <div class="live-events-timeline" id="ccLiveEventsTimeline">
+                  <!-- Dynamically populated event stream -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: OWNER EXECUTIVE DASHBOARD -->
+        <!-- ============================================== -->
+        <section id="view-dashboard" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-owner"><i class="fa-solid fa-crown"></i> OWNER EXECUTIVE VIEW</span>
+              <h1 class="view-title">Executive Financial & Business Intelligence</h1>
+              <p class="view-subtitle">End-to-end profitability, sales trends, branch benchmarks, and wastage insights.</p>
+            </div>
+            <div class="date-filter-group">
+              <button class="filter-chip active" data-range="today">Today</button>
+              <button class="filter-chip" data-range="yesterday">Yesterday</button>
+              <button class="filter-chip" data-range="week">This Week</button>
+              <button class="filter-chip" data-range="month">This Month</button>
+              <button class="filter-chip" data-range="custom"><i class="fa-regular fa-calendar"></i> Custom</button>
+            </div>
+          </div>
+
+          <!-- Top Executive Metrics Strip -->
+          <div class="owner-kpi-grid">
+            <div class="kpi-box primary-kpi">
+              <div class="kpi-label">Gross Revenue (ETB)</div>
+              <div class="kpi-number" id="ownerGrossSales">1,250,000</div>
+              <div class="kpi-sub positive"><i class="fa-solid fa-arrow-up"></i> +18.5% MoM</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">Operating Expenses</div>
+              <div class="kpi-number" id="ownerExpenses">420,000 <span class="kpi-unit">ETB</span></div>
+              <div class="kpi-sub">Cost of Goods: 310,000 ETB</div>
+            </div>
+            <div class="kpi-box success-kpi">
+              <div class="kpi-label">Estimated Gross Profit</div>
+              <div class="kpi-number" id="ownerProfit">830,000 <span class="kpi-unit">ETB</span></div>
+              <div class="kpi-sub positive">66.4% Net Margin</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">Total Guests & Orders</div>
+              <div class="kpi-number" id="ownerOrdersTotal">427 <span class="kpi-unit">Orders</span></div>
+              <div class="kpi-sub">512 Guests served (2,927 ETB AOV)</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">Inventory Asset Value</div>
+              <div class="kpi-number" id="ownerInventoryVal">645,800 <span class="kpi-unit">ETB</span></div>
+              <div class="kpi-sub text-warning">Wastage: 12,500 ETB (0.9%)</div>
+            </div>
+          </div>
+
+          <!-- Charts Row 1: Sales Trend & Revenue Breakdown -->
+          <div class="charts-grid-2col">
+            <div class="panel-card chart-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-chart-line text-primary"></i> Hourly / Daily Sales Trajectory</div>
+                <div class="chart-legend-pills">
+                  <span class="legend-pill" style="--c:#38bdf8">Sales (ETB)</span>
+                  <span class="legend-pill" style="--c:#10b981">Cost (ETB)</span>
+                </div>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="ownerSalesTrendChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel-card chart-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-chart-pie text-secondary"></i> Sales by Channel & Category</div>
+              </div>
+              <div class="chart-canvas-container">
+                <canvas id="ownerCategorySalesChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Top Selling Dishes & Branch Comparison Table -->
+          <div class="tables-grid-2col">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-trophy text-warning"></i> Top 5 Best Selling Items</div>
+                <button class="btn btn-xs btn-outline" data-view-target="menu-management">View Full Menu</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="ownerTopSellingTable">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>Qty Sold</th>
+                      <th>Revenue (ETB)</th>
+                      <th>Profit Margin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-building-circle-check text-success"></i> Branch Performance Benchmark</div>
+                <button class="btn btn-xs btn-outline" id="btnExportBranchReport">Export PDF</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="ownerBranchTable">
+                  <thead>
+                    <tr>
+                      <th>Branch</th>
+                      <th>Today Sales</th>
+                      <th>Orders</th>
+                      <th>Kitchen Speed</th>
+                      <th>Health</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 3: MANAGER OPERATIONS STATUS -->
+        <!-- ============================================== -->
+        <section id="view-manager-ops" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-manager"><i class="fa-solid fa-user-tie"></i> GENERAL / BRANCH MANAGER</span>
+              <h1 class="view-title">Operations Status & Floor Oversight</h1>
+              <p class="view-subtitle">Live monitor of pending tickets, cashier floats, supplier shipments, and required manager approvals.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-warning btn-sm" id="btnOpenPendingApprovals">
+                <i class="fa-solid fa-stamp"></i> Pending Approvals (<span id="managerApprovalCount">2</span>)
+              </button>
+            </div>
+          </div>
+
+          <!-- Operational Overview Cards -->
+          <div class="manager-ops-strip">
+            <div class="ops-card">
+              <div class="ops-card-label">OPEN ORDERS</div>
+              <div class="ops-card-value text-info" id="opsOpenOrders">5</div>
+              <div class="ops-card-sub">Awaiting confirmation</div>
+            </div>
+            <div class="ops-card">
+              <div class="ops-card-label">PREPARING</div>
+              <div class="ops-card-value text-warning" id="opsPreparingOrders">4</div>
+              <div class="ops-card-sub">In Kitchen/Bar</div>
+            </div>
+            <div class="ops-card">
+              <div class="ops-card-label">READY TO SERVE</div>
+              <div class="ops-card-value text-success" id="opsReadyOrders">3</div>
+              <div class="ops-card-sub">Waiter notified</div>
+            </div>
+            <div class="ops-card">
+              <div class="ops-card-label">SERVED / DINING</div>
+              <div class="ops-card-value text-primary" id="opsServedOrders">8</div>
+              <div class="ops-card-sub">Active at tables</div>
+            </div>
+            <div class="ops-card">
+              <div class="ops-card-label">COMPLAINTS</div>
+              <div class="ops-card-value text-danger" id="opsComplaints">1</div>
+              <div class="ops-card-sub">1 Open ticket</div>
+            </div>
+          </div>
+
+          <!-- Pending Approvals & Action Items -->
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-clipboard-check text-warning"></i> Items Requiring Manager Authorization</div>
+            </div>
+            <div class="approval-cards-grid" id="managerApprovalsList">
+              <!-- Dynamically rendered approval cards -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 4: CASHIER SYSTEM / POINT OF SALE (POS) -->
+        <!-- ============================================== -->
+        <section id="view-pos" class="view-panel">
+          <div class="pos-layout-wrapper">
+            
+            <!-- POS Left Area: Product Selector & Category Grid -->
+            <div class="pos-catalog-area">
+              <div class="pos-search-bar">
+                <div class="search-input-wrapper">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input type="text" id="posSearchInput" placeholder="Search menu item by name, code or Ethiopian specialty..." autocomplete="off" />
+                </div>
+                <div class="pos-order-type-selector">
+                  <button class="order-type-btn active" data-type="Dine-in"><i class="fa-solid fa-utensils"></i> Dine-in</button>
+                  <button class="order-type-btn" data-type="Takeaway"><i class="fa-solid fa-bag-shopping"></i> Takeaway</button>
+                  <button class="order-type-btn" data-type="Delivery"><i class="fa-solid fa-motorcycle"></i> Delivery</button>
+                </div>
+              </div>
+
+              <!-- POS Category Chips -->
+              <div class="pos-category-scroll" id="posCategoryChips">
+                <button class="category-chip active" data-cat="all">⭐ All Items</button>
+                <button class="category-chip" data-cat="Ethiopian Food">🥘 Ethiopian Food</button>
+                <button class="category-chip" data-cat="Burgers">🍔 Burgers & Sandwiches</button>
+                <button class="category-chip" data-cat="Pizza">🍕 Pizza & Italian</button>
+                <button class="category-chip" data-cat="Breakfast">🍳 Breakfast</button>
+                <button class="category-chip" data-cat="Coffee">☕ Ethiopian Coffee & Tea</button>
+                <button class="category-chip" data-cat="Drinks">🥤 Drinks & Fresh Juice</button>
+                <button class="category-chip" data-cat="Cocktails">🍸 Cocktails & Bar</button>
+                <button class="category-chip" data-cat="Desserts">🍰 Desserts</button>
+              </div>
+
+              <!-- Product Grid -->
+              <div class="pos-products-grid" id="posProductsGrid">
+                <!-- Dynamically populated product cards -->
+              </div>
+            </div>
+
+            <!-- POS Right Area: Active Cart, Table Selector & Bill Action -->
+            <div class="pos-cart-panel">
+              <div class="cart-header">
+                <div>
+                  <div class="cart-order-title" id="posCartTitle">Current Order #NEW</div>
+                  <div class="cart-meta-details">
+                    <span id="posCartOrderType">Dine-in</span> • 
+                    <span id="posCartTableLabel">Table: <strong>Not Assigned</strong></span>
+                  </div>
+                </div>
+                <div class="cart-actions-head">
+                  <button class="icon-btn btn-xs" id="btnSelectTableForOrder" title="Assign Table">
+                    <i class="fa-solid fa-chair"></i>
+                  </button>
+                  <button class="icon-btn btn-xs" id="btnClearCart" title="Clear Cart">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Customer Assignment Input -->
+              <div class="cart-customer-strip">
+                <div class="customer-picker-input">
+                  <i class="fa-solid fa-user-tag text-muted"></i>
+                  <select id="posCustomerSelect" class="clean-select">
+                    <option value="">Walk-in Customer (Guest)</option>
+                    <option value="1">Yonas Alemu (+251 911 234567) - Gold VIP (180 pts)</option>
+                    <option value="2">Selamawit Haile (+251 922 789012) - Regular</option>
+                    <option value="3">Dr. Tewodros G. (+251 933 456789) - Platinum VIP</option>
+                  </select>
+                </div>
+                <button class="btn btn-xs btn-outline" id="btnAddNewCustomerModal" title="Quick Add Customer"><i class="fa-solid fa-user-plus"></i></button>
+              </div>
+
+              <!-- Cart Item List -->
+              <div class="cart-items-container" id="posCartItemsList">
+                <div class="empty-cart-message">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  <p>Cart is currently empty.</p>
+                  <span>Select items from the menu to start order</span>
+                </div>
+              </div>
+
+              <!-- Cart Financial Summary -->
+              <div class="cart-summary-footer">
+                <div class="summary-line">
+                  <span>Subtotal:</span>
+                  <span id="posSubtotal">0.00 ETB</span>
+                </div>
+                <div class="summary-line">
+                  <span>VAT (15%):</span>
+                  <span id="posVat">0.00 ETB</span>
+                </div>
+                <div class="summary-line">
+                  <span>Service Charge (10%):</span>
+                  <span id="posServiceCharge">0.00 ETB</span>
+                </div>
+                <div class="summary-line discount-line" id="posDiscountRow" style="display: none;">
+                  <span>Discount (<span id="posDiscountPercent">0%</span>):</span>
+                  <span id="posDiscountAmount">-0.00 ETB</span>
+                </div>
+                <div class="summary-total-line">
+                  <span>GRAND TOTAL:</span>
+                  <span class="total-highlight" id="posGrandTotal">0.00 ETB</span>
+                </div>
+
+                <!-- Action Button Toolbar -->
+                <div class="cart-action-toolbar">
+                  <button class="btn btn-secondary btn-sm" id="btnApplyDiscount">
+                    <i class="fa-solid fa-percent"></i> Discount
+                  </button>
+                  <button class="btn btn-secondary btn-sm" id="btnSplitBill">
+                    <i class="fa-solid fa-divide"></i> Split
+                  </button>
+                  <button class="btn btn-info btn-sm" id="btnSendToKitchen">
+                    <i class="fa-solid fa-fire"></i> Send Kitchen
+                  </button>
+                </div>
+
+                <!-- Big Checkout Button -->
+                <button class="btn btn-success btn-lg btn-block pay-button" id="btnOpenPaymentModal" disabled>
+                  <i class="fa-solid fa-credit-card"></i> Pay & Checkout (<span id="btnPayAmount">0.00 ETB</span>)
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 5: KITCHEN DISPLAY SYSTEM (KDS) -->
+        <!-- ============================================== -->
+        <section id="view-kds" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-chef"><i class="fa-solid fa-fire-burner"></i> KITCHEN DISPLAY SYSTEM (KDS)</span>
+              <h1 class="view-title">Live Kitchen Order Management</h1>
+              <p class="view-subtitle">High-speed touch station for Executive Chef and Line Cooks. Real-time timers and auto waiter alerts.</p>
+            </div>
+            <div class="kds-filter-bar">
+              <div class="station-tab-group">
+                <button class="station-tab active" data-station="all">All Stations (<span id="kdsCountAll">7</span>)</button>
+                <button class="station-tab" data-station="Kitchen">🍳 Kitchen (<span id="kdsCountKitchen">5</span>)</button>
+                <button class="station-tab" data-station="Barista">☕ Barista (<span id="kdsCountBarista">1</span>)</button>
+                <button class="station-tab" data-station="Bar">🍸 Bar (<span id="kdsCountBar">1</span>)</button>
+                <button class="station-tab" data-station="Dessert">🍰 Dessert (<span id="kdsCountDessert">0</span>)</button>
+              </div>
+              <button class="btn btn-sm btn-outline" id="btnToggleKdsAudio"><i class="fa-solid fa-bell"></i> Sound: ON</button>
+            </div>
+          </div>
+
+          <!-- KDS 4-Column Real-Time Kanban Board -->
+          <div class="kds-kanban-board">
+            
+            <!-- Column 1: NEW ORDERS -->
+            <div class="kds-column" id="kdsColNew">
+              <div class="kds-column-header header-new">
+                <div class="col-title"><i class="fa-solid fa-asterisk"></i> NEW ORDERS</div>
+                <span class="kds-col-count" id="kdsColNewCount">2</span>
+              </div>
+              <div class="kds-tickets-list" id="kdsListNew">
+                <!-- Dynamically populated new tickets -->
+              </div>
+            </div>
+
+            <!-- Column 2: PREPARING -->
+            <div class="kds-column" id="kdsColPreparing">
+              <div class="kds-column-header header-preparing">
+                <div class="col-title"><i class="fa-solid fa-fire"></i> PREPARING</div>
+                <span class="kds-col-count" id="kdsColPrepCount">3</span>
+              </div>
+              <div class="kds-tickets-list" id="kdsListPreparing">
+                <!-- Dynamically populated preparing tickets -->
+              </div>
+            </div>
+
+            <!-- Column 3: READY TO SERVE -->
+            <div class="kds-column" id="kdsColReady">
+              <div class="kds-column-header header-ready">
+                <div class="col-title"><i class="fa-solid fa-bell-concierge"></i> READY (NOTIFIED)</div>
+                <span class="kds-col-count" id="kdsColReadyCount">2</span>
+              </div>
+              <div class="kds-tickets-list" id="kdsListReady">
+                <!-- Dynamically populated ready tickets -->
+              </div>
+            </div>
+
+            <!-- Column 4: SERVED / COMPLETED -->
+            <div class="kds-column" id="kdsColServed">
+              <div class="kds-column-header header-served">
+                <div class="col-title"><i class="fa-solid fa-circle-check"></i> RECENTLY SERVED</div>
+                <span class="kds-col-count" id="kdsColServedCount">4</span>
+              </div>
+              <div class="kds-tickets-list" id="kdsListServed">
+                <!-- Dynamically populated served tickets -->
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 6: BARISTA & BAR STATION KDS -->
+        <!-- ============================================== -->
+        <section id="view-barista-station" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-barista"><i class="fa-solid fa-mug-hot"></i> BARISTA & BEVERAGE STATION</span>
+              <h1 class="view-title">Ethiopian Coffee Ceremony & Beverage Station</h1>
+              <p class="view-subtitle">Specialized preparation queue for Traditional Bunna, Spris, Macchiato, Cocktails & Fresh Juices.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnQuickCoffeeOrder">
+              <i class="fa-solid fa-plus"></i> Quick Coffee Order
+            </button>
+          </div>
+
+          <div class="barista-station-grid" id="baristaStationContainer">
+            <!-- Dynamically populated beverage tickets -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 7: WAITER TERMINAL -->
+        <!-- ============================================== -->
+        <section id="view-waiter-hub" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-waiter"><i class="fa-solid fa-bell-concierge"></i> WAITER / SERVER PORTAL</span>
+              <h1 class="view-title">Waiter Mobile Terminal</h1>
+              <p class="view-subtitle">Assigned tables, active kitchen notifications, fast item ordering, and bill request workflow.</p>
+            </div>
+            <div class="waiter-stats-pills">
+              <div class="pill-stat">My Tables: <strong>4</strong></div>
+              <div class="pill-stat">Ready Orders: <strong class="text-success" id="waiterReadyPill">2</strong></div>
+              <div class="pill-stat">Today's Sales: <strong>14,200 ETB</strong></div>
+              <div class="pill-stat">Tips: <strong>850 ETB</strong></div>
+            </div>
+          </div>
+
+          <!-- Waiter Assigned Tables Grid -->
+          <div class="waiter-tables-grid" id="waiterTablesGrid">
+            <!-- Dynamically populated waiter table cards -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 8: FLOOR PLAN & VISUAL TABLE MANAGEMENT -->
+        <!-- ============================================== -->
+        <section id="view-tables" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Visual Restaurant Floor Plan</h1>
+              <p class="view-subtitle">Real-time table status map with guest count, dining duration, bill totals, and easy table transfers.</p>
+            </div>
+            <div class="floor-plan-legend">
+              <div class="legend-item"><span class="legend-dot status-green"></span> Available (12)</div>
+              <div class="legend-item"><span class="legend-dot status-red"></span> Occupied (8)</div>
+              <div class="legend-item"><span class="legend-dot status-yellow"></span> Reserved (3)</div>
+              <div class="legend-item"><span class="legend-dot status-blue"></span> Cleaning (1)</div>
+              <div class="legend-item"><span class="legend-dot status-gray"></span> Out of Service (0)</div>
+            </div>
+          </div>
+
+          <!-- Zone / Floor Switcher -->
+          <div class="floor-zone-tabs">
+            <button class="zone-tab active" data-zone="all">Entire Restaurant (24 Tables)</button>
+            <button class="zone-tab" data-zone="main">Main Dining Hall (12)</button>
+            <button class="zone-tab" data-zone="vip">VIP Traditional Lounge (4)</button>
+            <button class="zone-tab" data-zone="terrace">Outdoor Terrace (5)</button>
+            <button class="zone-tab" data-zone="bar">Bar Counter (3)</button>
+          </div>
+
+          <!-- Interactive Floor Canvas Grid -->
+          <div class="restaurant-floor-grid" id="restaurantFloorGrid">
+            <!-- Dynamically populated interactive table tiles -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 9: MENU MANAGEMENT & RECIPES -->
+        <!-- ============================================== -->
+        <section id="view-menu-management" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Menu & Product Catalog Management</h1>
+              <p class="view-subtitle">Manage dishes, selling prices, food costs, VAT rates, and station routing.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary btn-sm" id="btnOpenAddProductModal">
+                <i class="fa-solid fa-plus"></i> Add New Product
+              </button>
+            </div>
+          </div>
+
+          <div class="menu-management-table-wrap panel-card">
+            <div class="panel-card-header">
+              <div class="search-input-wrapper" style="max-width: 350px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="menuSearchInput" placeholder="Filter dishes..." />
+              </div>
+              <div class="table-actions">
+                <select id="menuCategoryFilter" class="custom-select">
+                  <option value="all">All Categories</option>
+                  <option value="Ethiopian Food">Ethiopian Food</option>
+                  <option value="Burgers">Burgers</option>
+                  <option value="Pizza">Pizza</option>
+                  <option value="Coffee">Coffee</option>
+                  <option value="Drinks">Drinks</option>
+                  <option value="Cocktails">Cocktails</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="menuManagementTable">
+                <thead>
+                  <tr>
+                    <th>Item / Image</th>
+                    <th>Category</th>
+                    <th>Station</th>
+                    <th>Cost (ETB)</th>
+                    <th>Price (ETB)</th>
+                    <th>Margin</th>
+                    <th>Prep Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 10: RECIPE MANAGEMENT (BILL OF MATERIALS) -->
+        <!-- ============================================== -->
+        <section id="view-recipes" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Recipe Management & Ingredient Deductions</h1>
+              <p class="view-subtitle">Every menu item is mapped to ingredients. Selling an item automatically deducts exact quantities from live inventory.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnCreateRecipeModal">
+              <i class="fa-solid fa-plus"></i> Create New Recipe
+            </button>
+          </div>
+
+          <div class="recipes-cards-grid" id="recipesListContainer">
+            <!-- Dynamically populated recipe BOM cards -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 11: INVENTORY & STOCK MANAGEMENT -->
+        <!-- ============================================== -->
+        <section id="view-inventory" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-storekeeper"><i class="fa-solid fa-boxes-stacked"></i> STOREKEEPER INVENTORY HUB</span>
+              <h1 class="view-title">Live Inventory & Ingredient Stock</h1>
+              <p class="view-subtitle">Track raw food ingredients, beverages, packaging, min/max thresholds, and wastage movements.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-outline btn-sm" id="btnRecordWastageModal">
+                <i class="fa-solid fa-trash-can-arrow-up"></i> Record Wastage / Damage
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnNewStockReceiptModal">
+                <i class="fa-solid fa-truck-ramp-box"></i> Receive Stock
+              </button>
+            </div>
+          </div>
+
+          <!-- Inventory KPI Ribbon -->
+          <div class="inventory-summary-strip">
+            <div class="inv-kpi-card">
+              <div class="inv-kpi-label">TOTAL STOCK VALUE</div>
+              <div class="inv-kpi-val" id="invTotalValue">645,800 ETB</div>
+            </div>
+            <div class="inv-kpi-card">
+              <div class="inv-kpi-label">TOTAL TRACKED ITEMS</div>
+              <div class="inv-kpi-val" id="invTotalItems">36</div>
+            </div>
+            <div class="inv-kpi-card alert-card">
+              <div class="inv-kpi-label">LOW STOCK WARNINGS</div>
+              <div class="inv-kpi-val text-danger" id="invLowStockTotal">2 Items</div>
+            </div>
+            <div class="inv-kpi-card">
+              <div class="inv-kpi-label">TODAY'S WASTAGE</div>
+              <div class="inv-kpi-val text-warning" id="invTodayWastage">1,450 ETB</div>
+            </div>
+          </div>
+
+          <!-- Inventory Stock Table -->
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-warehouse text-primary"></i> Current Stock Balances</div>
+              <div class="search-input-wrapper" style="max-width: 300px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="inventorySearchInput" placeholder="Search ingredient..." />
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="inventoryTable">
+                <thead>
+                  <tr>
+                    <th>Ingredient / Item</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Min Threshold</th>
+                    <th>Unit Cost</th>
+                    <th>Total Value</th>
+                    <th>Stock Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 12: PURCHASING & SUPPLIERS -->
+        <!-- ============================================== -->
+        <section id="view-purchasing" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Purchasing Orders & Requisitions</h1>
+              <p class="view-subtitle">End-to-end purchasing: Purchase Request → Manager Approval → Supplier Order → Stock Received → Payment.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnCreatePurchaseRequestModal">
+              <i class="fa-solid fa-plus"></i> Create Purchase Request
+            </button>
+          </div>
+
+          <div class="purchasing-workflow-table panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-file-contract text-primary"></i> Active Purchase Requests & Orders</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="purchasingOrdersTable">
+                <thead>
+                  <tr>
+                    <th>PO #</th>
+                    <th>Requested By</th>
+                    <th>Supplier</th>
+                    <th>Items Requested</th>
+                    <th>Total Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 13: SUPPLIERS DIRECTORY -->
+        <!-- ============================================== -->
+        <section id="view-suppliers" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Suppliers & Vendor Directory</h1>
+              <p class="view-subtitle">Manage food vendors, meat suppliers, dairy distributors, and compare price lists.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnAddSupplierModal">
+              <i class="fa-solid fa-plus"></i> Add New Supplier
+            </button>
+          </div>
+
+          <div class="suppliers-grid" id="suppliersGrid">
+            <!-- Dynamically populated supplier cards -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 14: EXPENSES MANAGEMENT -->
+        <!-- ============================================== -->
+        <section id="view-expenses" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Restaurant Expenses & Cash Outflows</h1>
+              <p class="view-subtitle">Track food purchases, utilities, rent, generator fuel, maintenance, and marketing expenses.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnAddExpenseModal">
+              <i class="fa-solid fa-plus"></i> Record Expense
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-receipt text-warning"></i> Recent Expense Records</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="expensesTable">
+                <thead>
+                  <tr>
+                    <th>Expense ID</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount (ETB)</th>
+                    <th>Paid By</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 15: STAFF ATTENDANCE & SHIFTS -->
+        <!-- ============================================== -->
+        <section id="view-staff-attendance" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-hr"><i class="fa-solid fa-user-group"></i> HR & ADMIN MODULE</span>
+              <h1 class="view-title">Employee Roster, Shifts & Attendance</h1>
+              <p class="view-subtitle">Clock-in/out with 4-digit PIN, shift schedules (Morning, Afternoon, Evening), and performance metrics.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-accent btn-sm" id="btnClockInOutModal">
+                <i class="fa-solid fa-fingerprint"></i> Staff Clock IN / OUT
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnAddEmployeeModal">
+                <i class="fa-solid fa-user-plus"></i> Add Employee
+              </button>
+            </div>
+          </div>
+
+          <!-- Attendance Stats Strip -->
+          <div class="attendance-summary-strip">
+            <div class="att-card">
+              <div class="att-label">TOTAL STAFF</div>
+              <div class="att-val" id="hrTotalStaff">20</div>
+            </div>
+            <div class="att-card">
+              <div class="att-label">PRESENT TODAY</div>
+              <div class="att-val text-success" id="hrPresentCount">18</div>
+            </div>
+            <div class="att-card">
+              <div class="att-label">LATE ARRIVALS</div>
+              <div class="att-val text-warning" id="hrLateCount">2</div>
+            </div>
+            <div class="att-card">
+              <div class="att-label">ON LEAVE</div>
+              <div class="att-val text-info" id="hrOnLeaveCount">2</div>
+            </div>
+          </div>
+
+          <!-- Staff Table -->
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-users text-primary"></i> Active Staff Directory & Shift Status</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="staffAttendanceTable">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>Shift</th>
+                    <th>Clock In</th>
+                    <th>Clock Out</th>
+                    <th>Status</th>
+                    <th>PIN</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 16: TASK MANAGEMENT -->
+        <!-- ============================================== -->
+        <section id="view-tasks" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Daily Operational Tasks</h1>
+              <p class="view-subtitle">Assign and track recurring daily tasks across kitchen, service, and maintenance teams.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnCreateTaskModal">
+              <i class="fa-solid fa-plus"></i> Assign New Task
+            </button>
+          </div>
+
+          <div class="tasks-kanban-grid">
+            <div class="task-col">
+              <div class="task-col-head"><i class="fa-regular fa-clock"></i> PENDING (<span id="taskPendingCount">3</span>)</div>
+              <div class="task-col-body" id="taskColPending"></div>
+            </div>
+            <div class="task-col">
+              <div class="task-col-head"><i class="fa-solid fa-spinner fa-spin"></i> IN PROGRESS (<span id="taskProgressCount">2</span>)</div>
+              <div class="task-col-body" id="taskColInProgress"></div>
+            </div>
+            <div class="task-col">
+              <div class="task-col-head"><i class="fa-solid fa-check-double"></i> COMPLETED (<span id="taskCompletedCount">5</span>)</div>
+              <div class="task-col-body" id="taskColCompleted"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 17: HYGIENE, CLEANING & MAINTENANCE -->
+        <!-- ============================================== -->
+        <section id="view-cleaning" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Hygiene Checklists & Equipment Maintenance</h1>
+              <p class="view-subtitle">Daily sanitation checklists (opening/closing) and equipment maintenance service tickets.</p>
+            </div>
+            <button class="btn btn-danger btn-sm" id="btnReportEquipmentIssueModal">
+              <i class="fa-solid fa-wrench"></i> Report Equipment Issue
+            </button>
+          </div>
+
+          <div class="cleaning-grid-2col">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-clipboard-list text-success"></i> Daily Sanitation Checklists</div>
+              </div>
+              <div class="checklist-container" id="sanitationChecklistContainer">
+                <!-- Checkboxes -->
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-triangle-exclamation text-danger"></i> Equipment Maintenance Tickets</div>
+              </div>
+              <div class="maintenance-tickets-list" id="maintenanceTicketsList">
+                <!-- Maintenance cards -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 18: RESERVATIONS -->
+        <!-- ============================================== -->
+        <section id="view-reservations" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Table Reservations & VIP Bookings</h1>
+              <p class="view-subtitle">Manage upcoming bookings, assign dedicated tables, and record special guest notes.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnNewReservationModal">
+              <i class="fa-solid fa-plus"></i> New Reservation
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <div class="table-responsive">
+              <table class="data-table" id="reservationsTable">
+                <thead>
+                  <tr>
+                    <th>Guest Name</th>
+                    <th>Phone</th>
+                    <th>Date & Time</th>
+                    <th>Guests</th>
+                    <th>Table</th>
+                    <th>Special Requests</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 19: CUSTOMERS & CRM / LOYALTY -->
+        <!-- ============================================== -->
+        <section id="view-crm" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Customer Relationship Management (CRM)</h1>
+              <p class="view-subtitle">Customer database, VIP tiers, visit history, favorite orders, and loyalty points (100 ETB = 1 pt).</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnCreateCustomerRecord">
+              <i class="fa-solid fa-user-plus"></i> Add Customer
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <div class="table-responsive">
+              <table class="data-table" id="customersTable">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Tier</th>
+                    <th>Total Visits</th>
+                    <th>Total Spend</th>
+                    <th>Loyalty Points</th>
+                    <th>Favorite Dish</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 20: DELIVERY DISPATCH -->
+        <!-- ============================================== -->
+        <section id="view-delivery" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-delivery"><i class="fa-solid fa-motorcycle"></i> DELIVERY DISPATCH SYSTEM</span>
+              <h1 class="view-title">Delivery Fleet & Online Orders</h1>
+              <p class="view-subtitle">Track delivery orders from kitchen prep to driver pickup and doorstep delivery.</p>
+            </div>
+          </div>
+
+          <div class="delivery-board-grid" id="deliveryBoardGrid">
+            <!-- Dynamically populated delivery cards -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 21: COMPLAINTS & TICKETS -->
+        <!-- ============================================== -->
+        <section id="view-complaints" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Customer Feedback & Complaint Tickets</h1>
+              <p class="view-subtitle">Record guest complaints (e.g. food temperature, delays), assign staff, and track resolution.</p>
+            </div>
+            <button class="btn btn-danger btn-sm" id="btnLogComplaintModal">
+              <i class="fa-solid fa-plus"></i> Log Customer Complaint
+            </button>
+          </div>
+
+          <div class="complaints-list-grid" id="complaintsListGrid">
+            <!-- Dynamically populated complaints -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 22: REPORTS & P&L -->
+        <!-- ============================================== -->
+        <section id="view-reports" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Advanced Business Intelligence & Financial Reports</h1>
+              <p class="view-subtitle">Generate official Daily Management Summary, Profit & Loss statements, and Category analytics.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-secondary btn-sm" id="btnPrintDailyReport">
+                <i class="fa-solid fa-print"></i> Print Daily Owner Report
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnExportFullData">
+                <i class="fa-solid fa-download"></i> Export CSV Data
+              </button>
+            </div>
+          </div>
+
+          <!-- Official Daily Restaurant Report Card -->
+          <div class="panel-card daily-report-preview-card" id="officialDailyReportCard">
+            <div class="report-watermark">RESTAURANT OS</div>
+            <div class="report-header-section">
+              <div class="report-brand">
+                <div class="rep-title">DAILY RESTAURANT MANAGEMENT REPORT</div>
+                <div class="rep-sub">Official Operations & Financial Statement • Ethiopia Operations</div>
+              </div>
+              <div class="report-meta">
+                <div>Date: <strong id="repCurrentDate">08 October 2026</strong></div>
+                <div>Branch: <strong id="repBranchName">Bole Flagship</strong></div>
+              </div>
+            </div>
+
+            <div class="report-stat-boxes">
+              <div class="r-box"><div class="r-lbl">Total Gross Sales</div><div class="r-val" id="repSales">1,250,000 ETB</div></div>
+              <div class="r-box"><div class="r-lbl">Total Expenses</div><div class="r-val" id="repExpenses">420,000 ETB</div></div>
+              <div class="r-box highlight"><div class="r-lbl">Estimated Gross Profit</div><div class="r-val text-success" id="repProfit">830,000 ETB</div></div>
+              <div class="r-box"><div class="r-lbl">Orders / Customers</div><div class="r-val" id="repOrders">427 / 512</div></div>
+              <div class="r-box"><div class="r-lbl">Avg Order Value</div><div class="r-val" id="repAvgOrder">2,927 ETB</div></div>
+              <div class="r-box"><div class="r-lbl">Best Seller Dish</div><div class="r-val" id="repBestSeller">Kerevat Burger</div></div>
+              <div class="r-box"><div class="r-lbl">Kitchen Avg Prep</div><div class="r-val" id="repKitchenTime">18 minutes</div></div>
+              <div class="r-box"><div class="r-lbl">Wastage Incurred</div><div class="r-val text-danger" id="repWastage">12,500 ETB</div></div>
+            </div>
+
+            <div class="report-footer-signatures">
+              <div class="sig-line">Prepared By: <span>Bethlehem T. (Cashier)</span></div>
+              <div class="sig-line">Approved By: <span>Dawit Mengistu (Manager)</span></div>
+              <div class="sig-line">Owner Review: <span>Abebe Kebede (Owner)</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 23: OPENING & CLOSING PROCEDURES -->
+        <!-- ============================================== -->
+        <section id="view-open-close" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Digital Restaurant Opening & Closing Procedures</h1>
+              <p class="view-subtitle">Standard Operating Procedures (SOP) to start and close the restaurant business day.</p>
+            </div>
+          </div>
+
+          <div class="open-close-grid">
+            <!-- Opening Box -->
+            <div class="panel-card sop-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-sun text-warning"></i> MORNING OPENING PROCEDURE</div>
+                <span class="status-badge badge-success">Completed Today</span>
+              </div>
+              <div class="sop-steps-list">
+                <label class="sop-step"><input type="checkbox" checked disabled /> 1. Staff Attendance Verified (18/20 Clocked In)</label>
+                <label class="sop-step"><input type="checkbox" checked disabled /> 2. Cash Float Verified (Opening Float: 10,000 ETB)</label>
+                <label class="sop-step"><input type="checkbox" checked disabled /> 3. Kitchen & Refrigeration Temperature Checked</label>
+                <label class="sop-step"><input type="checkbox" checked disabled /> 4. POS Terminals & Printers Online</label>
+                <label class="sop-step"><input type="checkbox" checked disabled /> 5. Floor Tables Sanitized & Ready</label>
+                <label class="sop-step"><input type="checkbox" checked disabled /> 6. Raw Ingredients Stock Verified</label>
+              </div>
+              <button class="btn btn-outline btn-block btn-sm" disabled>Business Day Is Active</button>
+            </div>
+
+            <!-- Closing Box -->
+            <div class="panel-card sop-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-moon text-indigo"></i> NIGHT CLOSING & SHIFT HANDOVER</div>
+                <span class="status-badge badge-warning">Pending Evening</span>
+              </div>
+              <div class="sop-steps-list" id="closingChecklistSteps">
+                <label class="sop-step"><input type="checkbox" id="closeCheck1" /> 1. All Open Orders Closed & Settled</label>
+                <label class="sop-step"><input type="checkbox" id="closeCheck2" /> 2. Cashier Drawer Reconciled (Z-Report)</label>
+                <label class="sop-step"><input type="checkbox" id="closeCheck3" /> 3. Kitchen KDS Cleared & Gas Valves Turned Off</label>
+                <label class="sop-step"><input type="checkbox" id="closeCheck4" /> 4. Perishables Stored in Refrigeration</label>
+                <label class="sop-step"><input type="checkbox" id="closeCheck5" /> 5. End of Day Management Report Generated</label>
+                <label class="sop-step"><input type="checkbox" id="closeCheck6" /> 6. Storage Locks Armed & Alarm Activated</label>
+              </div>
+              <button class="btn btn-danger btn-block" id="btnCloseBusinessDayBtn">
+                <i class="fa-solid fa-lock"></i> Close Business Day & Generate Report
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 24: SMART AUTOMATIONS -->
+        <!-- ============================================== -->
+        <section id="view-automations" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Smart Automation Engine</h1>
+              <p class="view-subtitle">Configure automated restaurant triggers (WHEN something happens → IF condition → THEN perform action).</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnCreateAutomationRuleModal">
+              <i class="fa-solid fa-plus"></i> Add Automation Rule
+            </button>
+          </div>
+
+          <div class="automation-rules-grid" id="automationRulesGrid">
+            <!-- Dynamically populated automation rules -->
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 25: SECURITY & AUDIT LOG -->
+        <!-- ============================================== -->
+        <section id="view-audit-log" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Security & Full System Audit Trail</h1>
+              <p class="view-subtitle">Every privileged action (price override, discount, refund, stock issuance) is immutably logged with employee and timestamp.</p>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btnExportAuditLog">
+              <i class="fa-solid fa-download"></i> Export Audit Log
+            </button>
+          </div>
+
+          <div class="panel-card">
+            <div class="table-responsive">
+              <table class="data-table" id="auditLogTable">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Employee / Role</th>
+                    <th>Action Performed</th>
+                    <th>Entity / Reference</th>
+                    <th>Details</th>
+                    <th>Branch</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Dynamically populated audit events -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 26: KITCHEN PERFORMANCE & EFFICIENCY -->
+        <!-- ============================================== -->
+        <section id="view-kitchen-performance" class="view-panel">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Kitchen Efficiency & Prep Metrics</h1>
+              <p class="view-subtitle">Detailed cook time metrics, delayed order alerts, and food waste analysis.</p>
+            </div>
+          </div>
+
+          <div class="kitchen-perf-grid">
+            <div class="panel-card">
+              <div class="panel-card-header"><div class="panel-card-title">Average Preparation Speed by Category</div></div>
+              <div class="chart-canvas-container">
+                <canvas id="kitchenPrepSpeedChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-header"><div class="panel-card-title">Delayed Orders Log (>15 Minutes)</div></div>
+              <div class="table-responsive">
+                <table class="data-table" id="delayedOrdersTable">
+                  <thead>
+                    <tr>
+                      <th>Order #</th>
+                      <th>Table</th>
+                      <th>Items</th>
+                      <th>Elapsed Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW: CASHIER HOME DASHBOARD (CASHIER RESPONSIBILITIES ONLY) -->
+        <section id="view-cashier-home" class="view-panel">
+          <div class="view-header">
+            <div>
+              <span class="badge-role-cashier"><i class="fa-solid fa-cash-register"></i> CASHIER WORKSTATION</span>
+              <h1 class="view-title">Cashier Home — <span id="cashierHomeShiftLabel">Day Shift #104</span></h1>
+              <p class="view-subtitle">Shift active for <strong id="cashierHomeNameLabel">Bethlehem Tadesse</strong>. Opening float: <strong>10,000 ETB</strong></p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-success btn-sm" onclick="window.RestaurantApp.switchView('pos')">
+                <i class="fa-solid fa-cash-register"></i> Open POS Terminal
+              </button>
+              <button class="btn btn-warning btn-sm" id="btnCashierHomeShiftClose">
+                <i class="fa-solid fa-scale-balanced"></i> End Shift (Z-Report)
+              </button>
+            </div>
+          </div>
+
+          <div class="control-grid-metrics">
+            <div class="metric-card metric-glow-emerald">
+              <div class="metric-top"><span class="metric-label">SHIFT SALES (ETB)</span><i class="fa-solid fa-coins text-success"></i></div>
+              <div class="metric-value" id="chSalesTotal">48,750 <span class="currency-tag">ETB</span></div>
+              <div class="metric-sub">Total settled sales</div>
+            </div>
+            <div class="metric-card metric-glow-cyan">
+              <div class="metric-top"><span class="metric-label">BILLS SETTLED</span><i class="fa-solid fa-receipt text-primary"></i></div>
+              <div class="metric-value" id="chOrdersSettled">42</div>
+              <div class="metric-sub">Paid receipts</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span class="metric-label">CASH COLLECTED</span><i class="fa-solid fa-money-bill text-warning"></i></div>
+              <div class="metric-value" id="chCashTotal">31,200 <span class="currency-tag">ETB</span></div>
+              <div class="metric-sub">Cash drawer sales</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span class="metric-label">MOBILE MONEY</span><i class="fa-solid fa-mobile text-primary"></i></div>
+              <div class="metric-value" id="chMobileTotal">12,300 <span class="currency-tag">ETB</span></div>
+              <div class="metric-sub">Telebirr & CBE Birr</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top"><span class="metric-label">UNPAID BILLS</span><i class="fa-solid fa-clock text-warning"></i></div>
+              <div class="metric-value text-warning" id="chOpenTablesCount">8</div>
+              <div class="metric-sub">Awaiting settlement</div>
+            </div>
+            <div class="metric-card metric-glow-cyan">
+              <div class="metric-top"><span class="metric-label">DRAWER FLOAT</span><i class="fa-solid fa-vault text-info"></i></div>
+              <div class="metric-value" id="chOpeningFloat">10,000 <span class="currency-tag">ETB</span></div>
+              <div class="metric-sub">Shift opening base</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:20px; flex-wrap:wrap;">
+            <!-- Unpaid Orders Table -->
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><i class="fa-solid fa-hourglass-half text-warning"></i> Unpaid Bills — Awaiting Payment</div>
+                <button class="btn btn-xs btn-primary" onclick="window.RestaurantApp.switchView('pos')">Open POS Terminal</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Order #</th>
+                      <th>Table</th>
+                      <th>Waiter</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cashierHomeUnpaidBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Quick Actions + Payment Breakdown -->
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div class="panel-card">
+                <div class="panel-card-header"><div class="panel-card-title"><i class="fa-solid fa-bolt text-accent"></i> Cashier Responsibilities</div></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                  <button class="btn btn-primary" onclick="window.RestaurantApp.switchView('pos')"><i class="fa-solid fa-cash-register"></i> Open POS Terminal</button>
+                  <button class="btn btn-success" id="btnQuickSettleOldest" onclick="window.RestaurantApp.settleFirstUnpaidOrder()"><i class="fa-solid fa-money-bill-transfer"></i> Settle Next Bill</button>
+                  <button class="btn btn-secondary" id="btnReprintLastReceipt" onclick="window.RestaurantApp.reprintLastReceipt()"><i class="fa-solid fa-print"></i> Reprint Receipt</button>
+                  <button class="btn btn-secondary" id="btnDrawerCheck" onclick="window.RestaurantApp.showDrawerCheckModal()"><i class="fa-solid fa-vault"></i> Cash Drawer Float</button>
+                  <button class="btn btn-warning" style="grid-column:1/-1;" id="btnCashierHomeShiftClose2"><i class="fa-solid fa-scale-balanced"></i> End Shift (Z-Report)</button>
+                </div>
+              </div>
+
+              <div class="panel-card">
+                <div class="panel-card-header"><div class="panel-card-title"><i class="fa-solid fa-chart-pie text-primary"></i> Payment Methods Breakdown</div></div>
+                <div style="display:flex; flex-direction:column; gap:8px; font-size:0.85rem;">
+                  <div style="display:flex; justify-content:space-between;"><span><i class="fa-solid fa-money-bill text-success"></i> Cash</span><strong id="chBreakdownCash">31,200 ETB</strong></div>
+                  <div class="workload-bar-wrap"><div class="workload-bar fill-75" style="background:var(--success);"></div></div>
+                  <div style="display:flex; justify-content:space-between;"><span><i class="fa-solid fa-mobile text-primary"></i> Telebirr & CBE Birr</span><strong id="chBreakdownMobile">12,300 ETB</strong></div>
+                  <div class="workload-bar-wrap"><div class="workload-bar fill-25" style="background:var(--primary);"></div></div>
+                  <div style="display:flex; justify-content:space-between;"><span><i class="fa-solid fa-credit-card text-warning"></i> Card / POS</span><strong id="chBreakdownCard">5,250 ETB</strong></div>
+                  <div class="workload-bar-wrap"><div class="workload-bar" style="width:12%; background:var(--warning);"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Settled Transactions -->
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><i class="fa-solid fa-check-double text-success"></i> Settled Transactions This Shift</div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Receipt #</th>
+                    <th>Time</th>
+                    <th>Table / Type</th>
+                    <th>Total Paid</th>
+                    <th>Method</th>
+                    <th>Receipt</th>
+                  </tr>
+                </thead>
+                <tbody id="cashierHomeSettledBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW: KITCHEN HOME (KITCHEN RESPONSIBILITIES ONLY) -->
+        <section id="view-kitchen-home" class="view-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <span class="badge-role-chef"><i class="fa-solid fa-fire-burner"></i> KITCHEN DISPLAY SYSTEM</span>
+              <h1 class="view-title">Kitchen Station — Live Orders</h1>
+              <p class="view-subtitle">Touch <strong>START</strong> to begin preparing. Touch <strong>READY</strong> when plated. Waiter is auto-notified.</p>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <div class="metric-card" style="padding:10px 18px; min-width:110px; text-align:center;">
+                <div class="metric-label">IN QUEUE</div>
+                <div class="metric-value text-warning" id="khQueueCount">5</div>
+              </div>
+              <div class="metric-card" style="padding:10px 18px; min-width:110px; text-align:center;">
+                <div class="metric-label">COOKING</div>
+                <div class="metric-value text-primary" id="khPrepCount">3</div>
+              </div>
+              <div class="metric-card" style="padding:10px 18px; min-width:110px; text-align:center;">
+                <div class="metric-label">READY</div>
+                <div class="metric-value text-success" id="khReadyCount">2</div>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="window.RestaurantApp.switchView('kds')">
+                <i class="fa-solid fa-expand"></i> Full KDS Kanban
+              </button>
+              <button class="btn btn-sm btn-outline" onclick="window.RestaurantApp.playSound('ready')">
+                <i class="fa-solid fa-bell"></i> Audio Bell Test
+              </button>
+              <button class="btn btn-sm btn-warning" onclick="window.RestaurantApp.openKitchen86Modal()">
+                <i class="fa-solid fa-ban"></i> 86 / Out of Stock
+              </button>
+            </div>
+          </div>
+
+          <!-- Kitchen Station Quick Filter -->
+          <div class="kds-station-filter-pills" style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px;">
+            <button class="btn btn-xs btn-primary active" data-kitchen-filter="all" onclick="window.RestaurantApp.filterKitchenHomeStation('all', this)"><i class="fa-solid fa-utensils"></i> All Kitchen</button>
+            <button class="btn btn-xs btn-secondary" data-kitchen-filter="Kitchen" onclick="window.RestaurantApp.filterKitchenHomeStation('Kitchen', this)"><i class="fa-solid fa-fire"></i> Hot Kitchen</button>
+            <button class="btn btn-xs btn-secondary" data-kitchen-filter="Grill" onclick="window.RestaurantApp.filterKitchenHomeStation('Grill', this)"><i class="fa-solid fa-drumstick-bite"></i> Grill / Burgers</button>
+            <button class="btn btn-xs btn-secondary" data-kitchen-filter="Barista" onclick="window.RestaurantApp.filterKitchenHomeStation('Barista', this)"><i class="fa-solid fa-mug-hot"></i> Coffee & Bar</button>
+            <button class="btn btn-xs btn-secondary" data-kitchen-filter="READY" onclick="window.RestaurantApp.filterKitchenHomeStation('READY', this)"><i class="fa-solid fa-bell-concierge text-success"></i> Plated / Ready Only</button>
+          </div>
+
+          <!-- Large Touch-Friendly Kitchen Ticket Cards -->
+          <div id="kitchenHomeLiveCards" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:20px;">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- AI RESTAURANT ASSISTANT MODAL / SLIDEOUT DRAWER -->
+    <!-- ============================================== -->
+    <div class="ai-assistant-drawer" id="aiAssistantDrawer">
+      <div class="ai-drawer-header">
+        <div class="ai-header-brand">
+          <div class="ai-sparkle-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <div>
+            <div class="ai-title">Gursha AI Assistant</div>
+            <div class="ai-sub">Real-Time Restaurant Intelligence</div>
+          </div>
+        </div>
+        <button class="icon-btn btn-xs" id="btnCloseAIDrawer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Quick Prompt Suggestions Chips -->
+      <div class="ai-quick-prompts">
+        <button class="ai-prompt-chip" data-query="How much did we sell today?">💰 How much did we sell today?</button>
+        <button class="ai-prompt-chip" data-query="Which food sold the most this week?">🍔 Best selling dishes?</button>
+        <button class="ai-prompt-chip" data-query="What ingredients are running low?">⚠️ Low stock ingredients?</button>
+        <button class="ai-prompt-chip" data-query="Which orders are currently delayed?">⏱️ Any delayed orders?</button>
+        <button class="ai-prompt-chip" data-query="What are our biggest expenses?">💸 Biggest expenses?</button>
+      </div>
+
+      <!-- Chat Message Log -->
+      <div class="ai-chat-messages" id="aiChatMessages">
+        <div class="ai-message assistant-msg">
+          <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="msg-content">
+            <p>Selam! I am <strong>Gursha AI</strong>, your real-time restaurant operating intelligence. Ask me anything about today's sales, kitchen delays, ingredient stock, staff attendance, or profit metrics.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="ai-input-bar">
+        <input type="text" id="aiInputPrompt" placeholder="Ask Gursha AI anything..." />
+        <button class="btn btn-primary" id="btnSendAIMessage"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 1: PAYMENT CHECKOUT & POS BILLING -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="paymentModalOverlay">
+      <div class="modal-dialog modal-md">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fa-solid fa-cash-register text-success"></i> Settle Payment & Receipt</h3>
+          <button class="modal-close-btn" id="btnClosePaymentModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="payment-amount-hero">
+            <div class="amount-title">Total Amount Due</div>
+            <div class="amount-number" id="payModalGrandTotal">0.00 ETB</div>
+          </div>
+
+          <!-- Payment Method Tabs -->
+          <div class="payment-method-selector">
+            <label class="pay-method-radio active">
+              <input type="radio" name="payMethod" value="Cash" checked />
+              <div class="method-card">
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Cash</span>
+              </div>
+            </label>
+            <label class="pay-method-radio">
+              <input type="radio" name="payMethod" value="Telebirr" />
+              <div class="method-card">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span>Telebirr</span>
+              </div>
+            </label>
+            <label class="pay-method-radio">
+              <input type="radio" name="payMethod" value="CBE Birr" />
+              <div class="method-card">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>CBE Birr</span>
+              </div>
+            </label>
+            <label class="pay-method-radio">
+              <input type="radio" name="payMethod" value="Card / POS" />
+              <div class="method-card">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Card / POS</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Cash Received Calculator -->
+          <div class="cash-calc-group" id="cashCalcGroup">
+            <div class="form-group">
+              <label class="form-label">Cash Tendered (ETB)</label>
+              <input type="number" id="payCashTendered" class="form-input" placeholder="Enter amount received..." />
+            </div>
+            <div class="change-display-box">
+              <span>Change to Return:</span>
+              <strong id="payChangeAmount">0.00 ETB</strong>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelPayment">Cancel</button>
+          <button class="btn btn-success btn-lg" id="btnConfirmPaymentAndPrint">
+            <i class="fa-solid fa-check"></i> Complete Payment & Print Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 2: PRINTABLE RECEIPT PREVIEW -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="receiptModalOverlay">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fa-solid fa-receipt"></i> Official POS Receipt</h3>
+          <button class="modal-close-btn" id="btnCloseReceiptModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="thermal-receipt-preview" id="thermalReceiptContent">
+            <!-- Thermal style receipt populated dynamically -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCloseReceiptDone">Close</button>
+          <button class="btn btn-primary" id="btnPrintReceiptHardware">
+            <i class="fa-solid fa-print"></i> Print Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 3: END OF SHIFT RECONCILIATION (Z-REPORT) -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="shiftCloseModalOverlay">
+      <div class="modal-dialog modal-md">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fa-solid fa-scale-balanced text-warning"></i> End-of-Shift Cashier Reconciliation</h3>
+          <button class="modal-close-btn" id="btnCloseShiftModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="reconcile-formula-box">
+            <div class="recon-row"><span>Opening Cash Float:</span> <strong id="reconOpeningCash">10,000.00 ETB</strong></div>
+            <div class="recon-row"><span>+ Total Cash Sales Today:</span> <strong id="reconCashSales" class="text-success">+40,000.00 ETB</strong></div>
+            <div class="recon-row"><span>- Cash Refunds & Paid-Outs:</span> <strong id="reconCashRefunds" class="text-danger">-0.00 ETB</strong></div>
+            <div class="recon-divider"></div>
+            <div class="recon-row highlight"><span>= Expected Drawer Cash:</span> <strong id="reconExpectedCash">50,000.00 ETB</strong></div>
+          </div>
+
+          <div class="form-group mt-3">
+            <label class="form-label">Actual Cash Counted in Drawer (ETB)</label>
+            <input type="number" id="reconActualCashInput" class="form-input" placeholder="e.g. 49500" />
+          </div>
+
+          <div class="diff-result-box" id="reconDiffResultBox">
+            <span>Cash Discrepancy:</span>
+            <strong id="reconDiffAmount">0.00 ETB</strong>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCancelShiftClose">Cancel</button>
+          <button class="btn btn-warning" id="btnSubmitShiftZReport">
+            <i class="fa-solid fa-stamp"></i> Submit Z-Report & Close Shift
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 4: GENERIC DYNAMIC FORMS MODAL -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="genericFormModalOverlay">
+      <div class="modal-dialog modal-md">
+        <div class="modal-header">
+          <h3 class="modal-title" id="genericModalTitle">Action Form</h3>
+          <button class="modal-close-btn" id="btnCloseGenericModal">&times;</button>
+        </div>
+        <div class="modal-body" id="genericModalBody">
+          <!-- Dynamic form content injected here -->
+        </div>
+        <div class="modal-footer" id="genericModalFooter">
+          <!-- Action buttons -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 5: KITCHEN 86 / OUT OF STOCK MANAGER -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="kitchen86ModalOverlay">
+      <div class="modal-dialog modal-md">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fa-solid fa-ban text-warning"></i> Kitchen 86 / Out of Stock Manager</h3>
+          <button class="modal-close-btn" id="btnCloseKitchen86Modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="text-secondary mb-3" style="font-size:0.85rem;">Toggle dish availability when ingredients run out. Items marked <strong>86</strong> cannot be ordered at Cashier POS or Waiter stations.</p>
+          <div id="kitchen86ItemsList" style="display:flex; flex-direction:column; gap:8px; max-height:360px; overflow-y:auto; padding-right:4px;">
+            <!-- Dynamically populated 86 toggle rows -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCloseKitchen86Done">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 6: CASHIER DRAWER FLOAT VERIFICATION -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="cashierDrawerModalOverlay">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fa-solid fa-vault text-success"></i> Cash Drawer Live Balance</h3>
+          <button class="modal-close-btn" id="btnCloseCashierDrawerModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="reconcile-formula-box" style="margin-bottom:12px;">
+            <div class="recon-row"><span>Opening Float:</span> <strong id="drawerOpeningVal">10,000.00 ETB</strong></div>
+            <div class="recon-row"><span>+ Cash Sales Today:</span> <strong id="drawerCashSalesVal" class="text-success">+31,200.00 ETB</strong></div>
+            <div class="recon-row"><span>- Cash Paid-Outs:</span> <strong class="text-danger">0.00 ETB</strong></div>
+            <div class="recon-divider"></div>
+            <div class="recon-row highlight"><span>= Current Expected Cash:</span> <strong id="drawerTotalCashVal" class="text-primary">41,200.00 ETB</strong></div>
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-secondary); line-height:1.4;">
+            <i class="fa-solid fa-circle-info text-info"></i> Cash drawer must be locked at all times. Z-Report reconciliation required at shift end.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-block" id="btnCloseCashierDrawerDone">Acknowledge</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Toast Notification Banner -->
+    <div class="toast-container" id="toastContainer"></div>
+
+  </div>
+
+  <!-- Application Modules & State Store -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
