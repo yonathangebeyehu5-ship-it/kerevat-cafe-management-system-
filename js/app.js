@@ -8,7 +8,7 @@
   // Global App Controller
   const RestaurantApp = {
     currentRole: 'owner',
-    currentBranch: 'bole',
+    currentBranch: 'lideta',
     activeView: 'control-center',
     posCart: [],
     posActiveOrderType: 'Dine-in',
@@ -374,7 +374,7 @@
         footerCard.innerHTML = `
           <div class="shift-dot active"></div>
           <div class="shift-info">
-            <div class="shift-title">Bole Flagship</div>
+            <div class="shift-title">Lideta Flagship</div>
             <div class="shift-sub">${window.appStore.state.roles[role]?.name || 'Staff User'}</div>
           </div>
           <button class="btn btn-xs btn-outline" onclick="window.RestaurantApp.openShiftClosingModal()" title="Shift Info">Shift</button>
@@ -471,7 +471,7 @@
         action,
         entity,
         details,
-        branch: "Bole Flagship"
+        branch: "Lideta Flagship"
       };
       window.appStore.state.auditLogs.unshift(newLog);
       if (window.appStore.state.auditLogs.length > 50) window.appStore.state.auditLogs.pop();
@@ -1380,8 +1380,8 @@
       receiptContainer.innerHTML = `
         <div class="receipt-header">
           <div class="receipt-brand-title">RESTAURANT OS</div>
-          <div>Bole Flagship • Addis Ababa, Ethiopia</div>
-          <div>TIN: 0049281920 • Tel: +251 11 661 2233</div>
+          <div>Lideta Flagship • Lideta Sub-City, Addis Ababa, Ethiopia</div>
+          <div>TIN: 0049281920 • Tel: +251 11 550 1122</div>
           <div style="margin-top:6px; font-weight:700;">OFFICIAL TAX INVOICE / RECEIPT</div>
         </div>
         <div><strong>Receipt #:</strong> ${order.id}</div>
@@ -2881,10 +2881,7 @@
       if (q.includes('how much') || q.includes('sales') || q.includes('sell today') || q.includes('revenue')) {
         return `
           <p>💰 <strong>Today's Total Sales:</strong> <span style="color:var(--success); font-weight:800;">${totalSales.toLocaleString()} ETB</span> across <strong>427 orders</strong>.</p>
-          <p>• <strong>Bole Flagship:</strong> 48,750 ETB</p>
-          <p>• <strong>Kazanchis:</strong> 34,200 ETB</p>
-          <p>• <strong>Piassa:</strong> 28,900 ETB</p>
-          <p>• <strong>Hawassa:</strong> 38,100 ETB</p>
+          <p>• <strong>Lideta Flagship:</strong> 48,750 ETB (Lideta Exclusive Operations)</p>
           <p>Estimated Gross Profit: <strong>830,000 ETB (66.4% margin)</strong>.</p>
         `;
       }

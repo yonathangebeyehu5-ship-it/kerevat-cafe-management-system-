@@ -10,7 +10,7 @@ const INITIAL_RESTAURANT_DATA = {
     currency: "ETB",
     taxRate: 0.15, // 15% VAT Ethiopia
     serviceChargeRate: 0.10, // 10% Service Charge
-    activeBranch: "bole",
+    activeBranch: "lideta",
     openingTime: "07:00 AM",
     businessDayStatus: "OPEN", // "OPEN" or "CLOSED"
     activeShift: {
@@ -21,19 +21,16 @@ const INITIAL_RESTAURANT_DATA = {
     }
   },
 
-  // Multi-Branch Directory
+  // Branch Directory - Exclusively Configured for Lideta Branch
   branches: [
-    { id: "bole", name: "Bole Flagship", location: "Bole Road, Addis Ababa", phone: "+251 11 661 2233", tables: 24, activeOrders: 12, todaySales: 48750 },
-    { id: "kazanchis", name: "Kazanchis Center", location: "ECA Road, Addis Ababa", phone: "+251 11 552 4455", tables: 18, activeOrders: 8, todaySales: 34200 },
-    { id: "piassa", name: "Piassa Heritage", location: "Churchill Ave, Addis Ababa", phone: "+251 11 155 7788", tables: 16, activeOrders: 6, todaySales: 28900 },
-    { id: "hawassa", name: "Hawassa Lakeside", location: "Lake View Blvd, Hawassa", phone: "+251 46 220 9900", tables: 20, activeOrders: 9, todaySales: 38100 }
+    { id: "lideta", name: "Lideta Flagship", location: "Lideta Sub-City, Near Lideta Mall / Mexico, Addis Ababa", phone: "+251 11 550 1122", tables: 24, activeOrders: 12, todaySales: 48750 }
   ],
 
   // 16 Standard User Roles & Profiles
   roles: {
     owner: { title: "Owner / Executive", name: "Abebe Kebede", avatar: "AK", badge: "👑 Owner", permissions: ["ALL"] },
     general_manager: { title: "General Manager", name: "Dawit Mengistu", avatar: "DM", badge: "👔 GM", permissions: ["ALL_OPS", "APPROVE_PURCHASE", "REFUNDS"] },
-    branch_manager: { title: "Branch Manager (Bole)", name: "Rahel Solomon", avatar: "RS", badge: "🏢 BM", permissions: ["BRANCH_OPS", "DISCOUNTS", "SCHEDULES"] },
+    branch_manager: { title: "Branch Manager (Lideta)", name: "Rahel Solomon", avatar: "RS", badge: "🏢 BM", permissions: ["BRANCH_OPS", "DISCOUNTS", "SCHEDULES"] },
     supervisor: { title: "Shift Supervisor", name: "Kassahun Bekele", avatar: "KB", badge: "📋 Supervisor", permissions: ["FLOOR_CONTROL", "VOID_ITEMS"] },
     cashier: { title: "Cashier / POS", name: "Bethlehem Tadesse", avatar: "BT", badge: "💳 Cashier", permissions: ["POS_BILLING", "RECEIPTS", "PAYMENTS", "SHIFT_RECONCILE"] },
     waiter: { title: "Waiter / Server", name: "Ephrem Tefera", avatar: "ET", badge: "🍽️ Waiter", permissions: ["ORDER_TAKING", "TABLES", "BILL_REQUEST"] },
@@ -464,10 +461,10 @@ const INITIAL_RESTAURANT_DATA = {
     { id: "cust-4", name: "Bethlehem Assefa", phone: "+251 944 112233", tier: "New Guest", visits: 2, totalSpend: 1950, points: 19, favDish: "Addis Macchiato" }
   ],
 
-  // Live Delivery Orders
+  // Live Delivery Orders (Lideta & Surrounding Addis Ababa Areas)
   deliveryOrders: [
-    { id: "DEL-401", orderNumber: 1050, customer: "Hanna Girma", phone: "+251 911 887766", address: "Bole Atlas, House #402", driver: "Natnael Desta", fee: 150, total: 1450, status: "ON_THE_WAY", time: "12:30 PM" },
-    { id: "DEL-402", orderNumber: 1051, customer: "Kidus T.", phone: "+251 922 334455", address: "Kazanchis, Behind UNECA", driver: "Natnael Desta", fee: 180, total: 2100, status: "PREPARING", time: "12:45 PM" }
+    { id: "DEL-401", orderNumber: 1050, customer: "Hanna Girma", phone: "+251 911 887766", address: "Lideta, Near Balcha Hospital, House #402", driver: "Natnael Desta", fee: 120, total: 1450, status: "ON_THE_WAY", time: "12:30 PM" },
+    { id: "DEL-402", orderNumber: 1051, customer: "Kidus T.", phone: "+251 922 334455", address: "Lideta Commercial Center, 3rd Floor", driver: "Natnael Desta", fee: 100, total: 2100, status: "PREPARING", time: "12:45 PM" }
   ],
 
   // Complaints & Service Tickets
@@ -485,10 +482,10 @@ const INITIAL_RESTAURANT_DATA = {
 
   // System Security & Audit Log Stream
   auditLogs: [
-    { time: "12:45:10 PM", user: "Ephrem Tefera (Waiter)", role: "Waiter", action: "ORDER_CREATED", entity: "ORD-1048", details: "Created 2x Beyaynetu, 2x Spris for Table TR2", branch: "Bole Flagship" },
-    { time: "12:38:22 PM", user: "Chef Hailemariam", role: "Chef", action: "KDS_STATUS_READY", entity: "ORD-1047", details: "Marked Order #1047 as READY. Waiter notified.", branch: "Bole Flagship" },
-    { time: "12:25:00 PM", user: "Bethlehem T. (Cashier)", role: "Cashier", action: "DISCOUNT_APPLIED", entity: "ORD-1040", details: "Applied 10% Gold VIP discount (150 ETB). Manager PIN authorized.", branch: "Bole Flagship" },
-    { time: "12:15:30 PM", user: "Tadesse Woldie", role: "Storekeeper", action: "STOCK_DEDUCTED", entity: "RECIPE_BOM", details: "Auto deducted 300g beef, 2 buns for Order #1045", branch: "Bole Flagship" }
+    { time: "12:45:10 PM", user: "Ephrem Tefera (Waiter)", role: "Waiter", action: "ORDER_CREATED", entity: "ORD-1048", details: "Created 2x Beyaynetu, 2x Spris for Table TR2", branch: "Lideta Flagship" },
+    { time: "12:38:22 PM", user: "Chef Hailemariam", role: "Chef", action: "KDS_STATUS_READY", entity: "ORD-1047", details: "Marked Order #1047 as READY. Waiter notified.", branch: "Lideta Flagship" },
+    { time: "12:25:00 PM", user: "Bethlehem T. (Cashier)", role: "Cashier", action: "DISCOUNT_APPLIED", entity: "ORD-1040", details: "Applied 10% Gold VIP discount (150 ETB). Manager PIN authorized.", branch: "Lideta Flagship" },
+    { time: "12:15:30 PM", user: "Tadesse Woldie", role: "Storekeeper", action: "STOCK_DEDUCTED", entity: "RECIPE_BOM", details: "Auto deducted 300g beef, 2 buns for Order #1045", branch: "Lideta Flagship" }
   ]
 };
 
@@ -499,6 +496,14 @@ class RestaurantStore {
     if (saved) {
       try {
         this.state = JSON.parse(saved);
+        // Ensure Lideta branch migration
+        if (!this.state.branches || !this.state.branches.some(b => b.id === 'lideta')) {
+          this.state.branches = INITIAL_RESTAURANT_DATA.branches;
+          if (this.state.meta) {
+            this.state.meta.activeBranch = 'lideta';
+          }
+          this.save();
+        }
       } catch (e) {
         console.error("Failed to parse saved state, resetting to initial:", e);
         this.state = INITIAL_RESTAURANT_DATA;

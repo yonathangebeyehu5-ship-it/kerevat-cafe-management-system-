@@ -6,10 +6,10 @@
   <title>RESTAURANT OS - Run Your Restaurant. Control Every Operation.</title>
   <meta name="description" content="Next-Generation Restaurant & Café Management Operating System for Ethiopia. Integrated POS, KDS, Floor Plan, Inventory, Recipes, CRM, Multi-Branch & AI Assistant." />
   
-  <!-- Modern Typography (Inter & Plus Jakarta Sans) -->
+  <!-- Modern & Futuristic Typography (Orbitron, Rajdhani, Plus Jakarta Sans, JetBrains Mono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   
   <!-- Font Awesome Icons for crisp UI icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -21,6 +21,8 @@
 
   <!-- Core Stylesheet -->
   <link rel="stylesheet" href="css/style.css" />
+  <!-- QUANTUM FUTURISTIC LAYER -->
+  <link rel="stylesheet" href="css/futuristic.css" />
 </head>
 <body class="theme-dark">
   <!-- Audio notification elements (synthesized via Web Audio API) -->
@@ -34,42 +36,57 @@
         <button id="sidebarToggleBtn" class="icon-btn" title="Toggle Navigation">
           <i class="fa-solid fa-bars-staggered"></i>
         </button>
-        <div class="brand-container">
-          <div class="brand-logo-badge">
-            <i class="fa-solid fa-utensils"></i>
+        <div class="brand-container" id="brandNavHome" title="KEREVAT OS 3.0 // Quantum Control">
+          <div class="brand-logo-badge cyber-pulse-logo">
+            <i class="fa-solid fa-microchip"></i>
           </div>
           <div class="brand-text">
-            <div class="brand-title">RESTAURANT <span class="brand-accent">OS</span></div>
-            <div class="brand-tagline">Control Every Operation</div>
+            <div class="brand-title">KEREVAT <span class="brand-accent">OS 3.0</span> <span class="brand-quantum-badge">QUANTUM</span></div>
+            <div class="brand-tagline"><span class="cyber-dot"></span> NEXT-GEN RESTAURANT MATRIX</div>
           </div>
         </div>
 
-        <!-- Branch Selector -->
+        <!-- Branch Selector (Exclusively Lideta Flagship) -->
         <div class="branch-selector-wrapper">
-          <i class="fa-solid fa-location-dot branch-icon"></i>
+          <i class="fa-solid fa-location-dot branch-icon text-cyan"></i>
           <select id="branchSelector" class="custom-select branch-select">
-            <option value="all">🏢 All Branches (Consolidated)</option>
-            <option value="bole" selected>📍 Bole Flagship (Addis Ababa)</option>
-            <option value="kazanchis">📍 Kazanchis Center</option>
-            <option value="piassa">📍 Piassa Heritage</option>
-            <option value="hawassa">📍 Hawassa Lakeside</option>
+            <option value="lideta" selected>📍 Lideta Flagship (Addis Ababa)</option>
           </select>
         </div>
+
+        <!-- Global Quick Command Palette Trigger (Ctrl+K) -->
+        <button class="cyber-cmd-btn" id="btnOpenCommandPalette" title="Open Quantum Command Palette (Ctrl+K)">
+          <i class="fa-solid fa-terminal"></i>
+          <span class="cmd-text hide-mobile">COMMAND HUD</span>
+          <kbd class="cmd-kbd">Ctrl+K</kbd>
+        </button>
       </div>
 
       <!-- Quick Operational Ticker (Status Banner) -->
       <div class="nav-center-ticker" id="operationalTicker">
-        <div class="ticker-item"><span class="ticker-pulse green"></span> <strong id="tickerActiveOrders">12</strong> Active Orders</div>
+        <div class="ticker-item"><span class="ticker-pulse cyan"></span> <strong id="tickerActiveOrders">12</strong> Active Orders</div>
         <div class="ticker-divider">|</div>
         <div class="ticker-item"><i class="fa-solid fa-chair text-warning"></i> <strong id="tickerOccupiedTables">8/24</strong> Tables Busy</div>
         <div class="ticker-divider">|</div>
-        <div class="ticker-item"><i class="fa-solid fa-coins text-success"></i> <strong id="tickerTodayRevenue">48,750</strong> ETB Today</div>
+        <div class="ticker-item"><i class="fa-solid fa-coins text-success"></i> <strong id="tickerTodayRevenue">48,750</strong> ETB</div>
+        <div class="ticker-divider hide-mobile">|</div>
+        <div class="ticker-item hide-mobile"><i class="fa-solid fa-bolt text-info"></i> <span id="tickerLatency">14ms</span> Mesh</div>
         <div class="ticker-divider">|</div>
         <div class="ticker-item" id="tickerAlertWrapper"><span class="status-badge badge-warning" id="tickerAlertBadge"><i class="fa-solid fa-triangle-exclamation"></i> 1 Alert</span></div>
       </div>
 
       <!-- Top Right Controls -->
       <div class="nav-right">
+        <!-- Live System Telemetry HUD Trigger -->
+        <button class="btn btn-hud-telemetry" id="btnOpenTelemetryModal" title="Live System Diagnostics & Mesh Telemetry">
+          <i class="fa-solid fa-chart-line"></i> <span class="hide-mobile">HUD Vitals</span>
+        </button>
+
+        <!-- Cyber FX Theme Mode Switcher -->
+        <button class="icon-btn cyber-fx-btn" id="btnToggleCyberFx" title="Toggle Futuristic Cyber FX / Scanlines">
+          <i class="fa-solid fa-wand-magic"></i>
+        </button>
+
         <!-- Quick Action Menu -->
         <button class="btn btn-primary btn-sm btn-glow" id="btnQuickNewOrder">
           <i class="fa-solid fa-plus"></i> <span class="hide-mobile">New Order</span>
@@ -81,8 +98,8 @@
         </button>
 
         <!-- AI Assistant Trigger Button -->
-        <button class="icon-btn ai-btn-pulse" id="btnOpenAI" title="Gursha AI Assistant">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <button class="icon-btn ai-btn-pulse" id="btnOpenAI" title="Kerevat Quantum AI Brain">
+          <i class="fa-solid fa-brain"></i>
         </button>
 
         <!-- Notification Bell -->
@@ -910,8 +927,9 @@
         <section id="view-tables" class="view-panel">
           <div class="view-header">
             <div>
-              <h1 class="view-title">Visual Restaurant Floor Plan</h1>
-              <p class="view-subtitle">Real-time table status map with guest count, dining duration, bill totals, and easy table transfers.</p>
+              <div class="badge-live-pulse"><i class="fa-solid fa-satellite-dish"></i> TACTICAL RESTAURANT MATRIX</div>
+              <h1 class="view-title">Visual Floor Plan & Tactical Radar</h1>
+              <p class="view-subtitle">Real-time table telemetry, zone heatmaps, dining velocity, and holographic seating control.</p>
             </div>
             <div class="floor-plan-legend">
               <div class="legend-item"><span class="legend-dot status-green"></span> Available (12)</div>
@@ -919,6 +937,26 @@
               <div class="legend-item"><span class="legend-dot status-yellow"></span> Reserved (3)</div>
               <div class="legend-item"><span class="legend-dot status-blue"></span> Cleaning (1)</div>
               <div class="legend-item"><span class="legend-dot status-gray"></span> Out of Service (0)</div>
+            </div>
+          </div>
+
+          <!-- Tactical HUD Radar Controls -->
+          <div class="tactical-radar-bar">
+            <div class="tactical-metrics">
+              <div class="tac-item"><i class="fa-solid fa-crosshairs text-info"></i> Table Load: <strong id="floorTacOccupancy">67%</strong></div>
+              <div class="tac-item"><i class="fa-solid fa-stopwatch text-warning"></i> Avg Turnaround: <strong>38 min</strong></div>
+              <div class="tac-item"><i class="fa-solid fa-coins text-success"></i> Live Floor Value: <strong id="floorTacValue">31,400 ETB</strong></div>
+            </div>
+            <div class="tactical-actions">
+              <button class="btn btn-xs btn-outline-cyan active" id="btnToggleRadarSweep">
+                <i class="fa-solid fa-satellite-dish"></i> Radar Sweep: <span id="radarSweepStatusText">ON</span>
+              </button>
+              <button class="btn btn-xs btn-outline-amber" id="btnToggleHeatmap">
+                <i class="fa-solid fa-fire"></i> Zone Heatmap: <span id="heatmapStatusText">OFF</span>
+              </button>
+              <button class="btn btn-xs btn-secondary" id="btnFloorResetQuick">
+                <i class="fa-solid fa-rotate"></i> Sync Matrix
+              </button>
             </div>
           </div>
 
@@ -931,8 +969,9 @@
             <button class="zone-tab" data-zone="bar">Bar Counter (3)</button>
           </div>
 
-          <!-- Interactive Floor Canvas Grid -->
-          <div class="restaurant-floor-grid" id="restaurantFloorGrid">
+          <!-- Interactive Floor Canvas Grid with Radar Sweep Effect -->
+          <div class="restaurant-floor-grid radar-sweep-active" id="restaurantFloorGrid">
+            <div class="radar-sweep-beam" id="radarSweepBeam"></div>
             <!-- Dynamically populated interactive table tiles -->
           </div>
         </section>
@@ -1454,7 +1493,7 @@
               </div>
               <div class="report-meta">
                 <div>Date: <strong id="repCurrentDate">08 October 2026</strong></div>
-                <div>Branch: <strong id="repBranchName">Bole Flagship</strong></div>
+                <div>Branch: <strong id="repBranchName">Lideta Flagship</strong></div>
               </div>
             </div>
 
@@ -1801,13 +1840,16 @@
     <!-- ============================================== -->
     <!-- AI RESTAURANT ASSISTANT MODAL / SLIDEOUT DRAWER -->
     <!-- ============================================== -->
-    <div class="ai-assistant-drawer" id="aiAssistantDrawer">
+    <div class="ai-assistant-drawer cyber-glass-panel" id="aiAssistantDrawer">
       <div class="ai-drawer-header">
         <div class="ai-header-brand">
-          <div class="ai-sparkle-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <div class="ai-orb-container">
+            <div class="ai-orb-ring"></div>
+            <div class="ai-orb-core"><i class="fa-solid fa-brain"></i></div>
+          </div>
           <div>
-            <div class="ai-title">Gursha AI Assistant</div>
-            <div class="ai-sub">Real-Time Restaurant Intelligence</div>
+            <div class="ai-title">KEREVAT <span class="text-cyan">QUANTUM</span> AI</div>
+            <div class="ai-sub"><span class="cyber-dot"></span> Neural Restaurant Intelligence v3.0</div>
           </div>
         </div>
         <button class="icon-btn btn-xs" id="btnCloseAIDrawer"><i class="fa-solid fa-xmark"></i></button>
@@ -1815,27 +1857,29 @@
 
       <!-- Quick Prompt Suggestions Chips -->
       <div class="ai-quick-prompts">
-        <button class="ai-prompt-chip" data-query="How much did we sell today?">💰 How much did we sell today?</button>
-        <button class="ai-prompt-chip" data-query="Which food sold the most this week?">🍔 Best selling dishes?</button>
-        <button class="ai-prompt-chip" data-query="What ingredients are running low?">⚠️ Low stock ingredients?</button>
-        <button class="ai-prompt-chip" data-query="Which orders are currently delayed?">⏱️ Any delayed orders?</button>
-        <button class="ai-prompt-chip" data-query="What are our biggest expenses?">💸 Biggest expenses?</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="How much did we sell today?">💰 Revenue scan</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="Which food sold the most this week?">🍔 Top dishes</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="What ingredients are running low?">⚠️ Stock alerts</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="Which orders are currently delayed?">⏱️ Delayed orders</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="What are our biggest expenses?">💸 Cost analysis</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="Predict tomorrow's sales based on trends">🔮 Predict sales</button>
+        <button class="ai-prompt-chip cyber-chip" data-query="Show me staff performance today">👥 Staff report</button>
       </div>
 
       <!-- Chat Message Log -->
       <div class="ai-chat-messages" id="aiChatMessages">
         <div class="ai-message assistant-msg">
-          <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="msg-avatar"><i class="fa-solid fa-brain"></i></div>
           <div class="msg-content">
-            <p>Selam! I am <strong>Gursha AI</strong>, your real-time restaurant operating intelligence. Ask me anything about today's sales, kitchen delays, ingredient stock, staff attendance, or profit metrics.</p>
+            <p>ሰላም! I am <strong>Kerevat Quantum AI</strong> — your neural restaurant intelligence. I analyze real-time POS data, kitchen telemetry, inventory levels, and customer patterns. Ask me anything.</p>
           </div>
         </div>
       </div>
 
       <!-- Input Bar -->
       <div class="ai-input-bar">
-        <input type="text" id="aiInputPrompt" placeholder="Ask Gursha AI anything..." />
-        <button class="btn btn-primary" id="btnSendAIMessage"><i class="fa-solid fa-paper-plane"></i></button>
+        <input type="text" id="aiInputPrompt" placeholder="Query the Quantum AI brain..." />
+        <button class="btn btn-primary btn-glow" id="btnSendAIMessage"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
 
@@ -2033,6 +2077,89 @@
       </div>
     </div>
 
+    <!-- ============================================== -->
+    <!-- QUANTUM COMMAND PALETTE (Ctrl+K) -->
+    <!-- ============================================== -->
+    <div class="cmd-palette-overlay" id="cmdPaletteOverlay">
+      <div class="cmd-palette-dialog">
+        <div class="cmd-palette-header">
+          <i class="fa-solid fa-terminal cmd-palette-icon"></i>
+          <input type="text" id="cmdPaletteInput" placeholder="Type a command, search views, or query AI..." autocomplete="off" spellcheck="false" />
+          <kbd class="cmd-kbd-esc">ESC</kbd>
+        </div>
+        <div class="cmd-palette-results" id="cmdPaletteResults">
+          <!-- Populated by JS -->
+        </div>
+        <div class="cmd-palette-footer">
+          <span><kbd>↑↓</kbd> Navigate</span>
+          <span><kbd>↵</kbd> Execute</span>
+          <span><kbd>ESC</kbd> Dismiss</span>
+          <span class="cmd-palette-hint">KEREVAT OS QUANTUM COMMAND INTERFACE v3.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- LIVE HUD TELEMETRY / SYSTEM DIAGNOSTICS MODAL -->
+    <!-- ============================================== -->
+    <div class="modal-overlay" id="telemetryModalOverlay">
+      <div class="modal-dialog modal-md cyber-glass-panel">
+        <div class="modal-header">
+          <h3 class="modal-title hud-title"><i class="fa-solid fa-chart-line text-cyan"></i> LIVE SYSTEM TELEMETRY & HUD VITALS</h3>
+          <button class="modal-close-btn" id="btnCloseTelemetryModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="telemetry-grid">
+            <div class="telemetry-card">
+              <div class="tele-label">MESH LATENCY</div>
+              <div class="tele-value text-cyan" id="teleMeshLatency">14ms</div>
+              <div class="tele-bar"><div class="tele-bar-fill good" style="width:85%"></div></div>
+            </div>
+            <div class="telemetry-card">
+              <div class="tele-label">POS THROUGHPUT</div>
+              <div class="tele-value text-success" id="teleThroughput">427 TXN/hr</div>
+              <div class="tele-bar"><div class="tele-bar-fill good" style="width:72%"></div></div>
+            </div>
+            <div class="telemetry-card">
+              <div class="tele-label">KITCHEN LOAD INDEX</div>
+              <div class="tele-value text-warning" id="teleKitchenLoad">68%</div>
+              <div class="tele-bar"><div class="tele-bar-fill warn" style="width:68%"></div></div>
+            </div>
+            <div class="telemetry-card">
+              <div class="tele-label">ACTIVE SESSIONS</div>
+              <div class="tele-value text-info" id="teleActiveSessions">12</div>
+              <div class="tele-bar"><div class="tele-bar-fill good" style="width:50%"></div></div>
+            </div>
+            <div class="telemetry-card">
+              <div class="tele-label">INVENTORY SYNC</div>
+              <div class="tele-value text-success">LIVE</div>
+              <div class="tele-bar"><div class="tele-bar-fill good" style="width:100%"></div></div>
+            </div>
+            <div class="telemetry-card">
+              <div class="tele-label">NEURAL AI STATUS</div>
+              <div class="tele-value text-cyan">ONLINE</div>
+              <div class="tele-bar"><div class="tele-bar-fill good" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div class="tele-live-feed" id="teleLiveFeed">
+            <div class="tele-feed-row"><span class="tele-time">14:05:22</span><span class="tele-msg text-success">▶ Order ORD-1051 placed — Table 7 (Dine-in) — 3 items</span></div>
+            <div class="tele-feed-row"><span class="tele-time">14:05:18</span><span class="tele-msg text-info">✓ KDS Order ORD-1048 marked READY by Kitchen</span></div>
+            <div class="tele-feed-row"><span class="tele-time">14:04:55</span><span class="tele-msg text-warning">⚠ Ingredient Alert: Beef stock at 38% threshold</span></div>
+            <div class="tele-feed-row"><span class="tele-time">14:04:31</span><span class="tele-msg text-success">💰 Payment settled — ORD-1047 — 1,250 ETB via Telebirr</span></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnCloseTelemetryDone">Close HUD</button>
+          <button class="btn btn-outline-cyan" id="btnTeleExportLog"><i class="fa-solid fa-download"></i> Export Telemetry Log</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanlines Overlay (Cyber FX) -->
+    <div class="scanlines-overlay" id="scanlinesOverlay"></div>
+    <!-- Particle Canvas Background -->
+    <canvas id="cyberParticleCanvas" class="cyber-particle-canvas"></canvas>
+
     <!-- Quick Toast Notification Banner -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -2041,5 +2168,7 @@
   <!-- Application Modules & State Store -->
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <!-- QUANTUM FUTURISTIC ENGINE -->
+  <script src="js/futuristic.js"></script>
 </body>
 </html>
